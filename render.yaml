@@ -1,0 +1,41 @@
+# Blueprint de Render: crea el servicio web y la base de datos PostgreSQL.
+services:
+  - type: web
+    name: supermass-rifa
+    runtime: node
+    plan: free
+    region: oregon
+    buildCommand: npm ci --omit=dev
+    startCommand: npm start
+    healthCheckPath: /healthz
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: DATABASE_URL
+        fromDatabase:
+          name: supermass-db
+          property: connectionString
+      - key: SESSION_SECRET
+        generateValue: true
+      - key: ADMIN_USER
+        value: admin
+      - key: ADMIN_PASSWORD
+        sync: false
+      - key: PUBLIC_URL
+        sync: false
+      - key: RIFA_NOMBRE
+        value: Gran Rifa Navideña SuperMass
+      - key: RIFA_PREMIO
+        value: Una despensa de $5,000
+      - key: RIFA_FECHA
+        value: Sábado 19 de diciembre de 2026
+      - key: TIENDA_DIRECCION
+        sync: false
+      - key: FACEBOOK_URL
+        sync: false
+
+databases:
+  - name: supermass-db
+    plan: free
+    databaseName: supermass
+    user: supermass

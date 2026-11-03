@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="560" height="200" viewBox="0 0 560 200" role="img" aria-label="SuperMass Abarrotes – Cerca de ti">
+  <!-- Logo provisional: reemplázalo subiendo public/img/logo.png con el logo oficial. -->
+  <g transform="translate(18 34)">
+    <path d="M10 40h104l-12 62a10 10 0 0 1-10 8H32a10 10 0 0 1-10-8z" fill="#FFD200" stroke="#9E0F14" stroke-width="6" stroke-linejoin="round"/>
+    <path d="M34 40c0-22 12-34 28-34s28 12 28 34" fill="none" stroke="#FFFFFF" stroke-width="8" stroke-linecap="round"/>
+    <path d="M44 58v34M62 58v34M80 58v34" stroke="#9E0F14" stroke-width="6" stroke-linecap="round"/>
+    <path d="M86 22c8-10 22-12 30-4-10 2-18 8-22 16" fill="#2E9E3E"/>
+  </g>
+  <text x="150" y="112" font-family="'Baloo 2','Arial Rounded MT Bold','Arial Black',sans-serif" font-weight="900" font-size="62" fill="#FFFFFF" stroke="#9E0F14" stroke-width="3" paint-order="stroke" textLength="392" lengthAdjust="spacingAndGlyphs">SUPERMASS</text>
+  <text x="154" y="152" font-family="'Nunito','Arial Rounded MT Bold',Arial,sans-serif" font-weight="800" font-size="22" fill="#FFD200" textLength="388" lengthAdjust="spacingAndGlyphs">ABARROTES · CERCA DE TI</text>
+</svg>
