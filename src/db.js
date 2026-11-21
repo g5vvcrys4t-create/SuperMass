@@ -150,11 +150,15 @@ function usarSsl(url) {
 async function iniciar() {
   const url = process.env.DATABASE_URL;
   if (url) {
+    // DB_SCHEMA permite compartir una base de datos con otro proyecto sin mezclar tablas.
+    const esquema = (process.env.DB_SCHEMA || '').replace(/[^a-z0-9_]/gi, '');
     pool = new Pool({
       connectionString: url,
       ssl: usarSsl(url) ? { rejectUnauthorized: false } : false,
       max: 10,
+      ...(esquema ? { options: `-c search_path=${esquema}` } : {}),
     });
+    if (esquema) await pool.query(`CREATE SCHEMA IF NOT EXISTS ${esquema}`);
   } else {
     let newDb;
     try {
