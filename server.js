@@ -13,6 +13,8 @@ const config = require('./src/config');
 const db = require('./src/db');
 const auth = require('./src/auth');
 const { imagenOg } = require('./src/og');
+const club = require('./src/club');
+const facebook = require('./src/facebook');
 
 const app = express();
 const PUBLIC = path.join(__dirname, 'public');
@@ -27,7 +29,7 @@ app.use(
         scriptSrc: ["'self'"],
         styleSrc: ["'self'", 'https://fonts.googleapis.com'],
         fontSrc: ["'self'", 'https://fonts.gstatic.com'],
-        imgSrc: ["'self'", 'data:', 'blob:'],
+        imgSrc: ["'self'", 'data:', 'blob:', 'https://*.fbcdn.net'],
         connectSrc: ["'self'"],
         formAction: ["'self'"],
         frameAncestors: ["'none'"],
@@ -48,12 +50,24 @@ const urlBase = (req) => config.publicUrl || `${req.protocol}://${req.get('host'
 const enmascarar = (tel) => `•• •••• ${String(tel).slice(-4)}`;
 
 const plantillas = {};
-function render(archivo, req, res) {
+const telBonito = (t) => (t ? `${t.slice(0, 2)} ${t.slice(2, 6)} ${t.slice(6)}` : '');
+
+function render(archivo, req, res, ruta = '/') {
   if (!plantillas[archivo] || !config.produccion) {
     plantillas[archivo] = fs.readFileSync(path.join(PUBLIC, archivo), 'utf8');
   }
   const base = urlBase(req);
   const datos = {
+    TIENDA_HORARIO: config.tienda.horario,
+    TIENDA_ZONA_ENVIO: config.tienda.zonaEnvio,
+    TIENDA_WHATSAPP: telBonito(config.tienda.whatsapp),
+    TIENDA_TELEFONO: telBonito(config.tienda.telefono || config.tienda.whatsapp),
+    TEL_URL: 'tel:+52' + (config.tienda.telefono || config.tienda.whatsapp),
+    MAPS_URL: 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent('SuperMass ' + config.tienda.direccion),
+    WHATSAPP_URL: config.tienda.whatsapp ? `https://wa.me/52${config.tienda.whatsapp}?text=${encodeURIComponent('¡Hola SuperMass! Quiero hacer un pedido 🛒')}` : '/pedido',
+    CLUB_BIENVENIDA: String(club.publico().bienvenida),
+    CLUB_PESOS_PUNTO: String(club.publico().pesosPorPunto),
+    CLUB_REFERIDO: String(club.publico().referido),
     RIFA_NOMBRE: config.rifa.nombre,
     RIFA_PREMIO: config.rifa.premio,
     RIFA_FECHA: config.rifa.fecha,
@@ -61,16 +75,20 @@ function render(archivo, req, res) {
     TIENDA_RESPONSABLE: config.tienda.responsable,
     TIENDA_CORREO: config.tienda.correo ? `al correo ${config.tienda.correo}` : 'en el mostrador de la tienda',
     FACEBOOK_URL: config.tienda.facebook,
-    PAGE_URL: base + '/',
+    PAGE_URL: base + ruta,
     OG_IMAGE: config.ogImageUrl || `${base}/og.png`,
     ANIO: String(new Date().getFullYear()),
   };
   const cfg = JSON.stringify({
-    shareUrl: base + '/',
+    shareUrl: base + '/rifa',
+    baseUrl: base,
     premio: config.rifa.premio,
     nombre: config.rifa.nombre,
+    fecha: config.rifa.fecha,
     registroAbierto: config.rifa.registroAbierto,
     maxFotoMb: config.limites.tamanoFotoMb,
+    whatsapp: config.tienda.whatsapp ? '52' + config.tienda.whatsapp : '',
+    club: club.publico(),
   }).replace(/</g, '\\u003c');
   const html = plantillas[archivo]
     .replace('{{CONFIG_JSON}}', cfg)
@@ -80,7 +98,11 @@ function render(archivo, req, res) {
 
 // ---------- Páginas públicas ----------
 
-app.get(['/', '/index.html'], (req, res) => render('index.html', req, res));
+app.get(['/', '/index.html'], (req, res) => render('index.html', req, res, '/'));
+app.get(['/rifa', '/rifa.html'], (req, res) => render('rifa.html', req, res, '/rifa'));
+app.get(['/club', '/club.html'], (req, res) => render('club.html', req, res, '/club'));
+app.get(['/pedido', '/pedido.html'], (req, res) => render('pedido.html', req, res, '/pedido'));
+app.get(['/buzon', '/buzon.html'], (req, res) => render('buzon.html', req, res, '/buzon'));
 app.get(['/aviso-privacidad', '/aviso-privacidad.html'], (req, res) => render('aviso-privacidad.html', req, res));
 app.get(['/admin', '/admin/'], (req, res) => {
   res.set('Cache-Control', 'no-store').sendFile(path.join(PUBLIC, 'admin.html'));
@@ -104,6 +126,10 @@ app.get('/logo', (req, res) => {
 });
 
 app.get('/healthz', (req, res) => res.json({ ok: true }));
+
+app.get('/api/facebook/publicaciones', async (req, res) => {
+  res.set('Cache-Control', 'public, max-age=300').json({ publicaciones: await facebook.publicaciones() });
+});
 
 app.use(express.static(PUBLIC, { index: false, maxAge: config.produccion ? '1h' : 0 }));
 
@@ -397,6 +423,43 @@ admin.post('/registros/:id/tombola', async (req, res) => {
   res.json({ ok: true, enTombola });
 });
 
+// ---------- Publicar en Facebook ----------
+
+admin.get('/facebook/estado', (req, res) => {
+  res.json({ conectado: facebook.conectado(), pageId: facebook.pageId(), paginaUrl: config.tienda.facebook, sitio: urlBase(req) });
+});
+
+admin.post('/facebook/publicar', (req, res, next) => {
+  subida.single('foto')(req, res, (err) => {
+    if (err && err.code === 'LIMIT_FILE_SIZE') return res.status(413).json({ error: `La foto pesa mucho. Máximo ${config.limites.tamanoFotoMb} MB.` });
+    if (err) return next(err);
+    (async () => {
+      const mensaje = String(req.body.mensaje || '').replace(/\r\n/g, '\n').trim().slice(0, 2000);
+      const enlace = /^https?:\/\/\S+$/.test(String(req.body.enlace || '').trim()) ? req.body.enlace.trim() : '';
+      if (mensaje.length < 3) return res.status(400).json({ error: 'Escribe el texto de la publicación.' });
+      let foto = null;
+      if (req.file) {
+        try {
+          const buffer = await sharp(req.file.buffer, { failOn: 'none' })
+            .rotate()
+            .resize({ width: 2048, height: 2048, fit: 'inside', withoutEnlargement: true })
+            .jpeg({ quality: 85, mozjpeg: true })
+            .toBuffer();
+          foto = { buffer, mime: 'image/jpeg' };
+        } catch {
+          return res.status(400).json({ error: 'No pudimos abrir la foto. Intenta con otra (JPG o PNG).' });
+        }
+      }
+      try {
+        res.json({ ok: true, ...(await facebook.publicar({ mensaje, enlace, foto })) });
+      } catch (e) {
+        res.status(e.status || 500).json({ error: e.message });
+      }
+    })().catch(next);
+  });
+});
+
+club(app, admin);
 app.use('/api/admin', admin);
 
 // ---------- Errores ----------

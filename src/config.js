@@ -23,6 +23,11 @@ module.exports = {
     facebook: env.FACEBOOK_URL || 'https://www.facebook.com/',
     responsable: env.TIENDA_RESPONSABLE || 'SuperMass Abarrotes',
     correo: env.TIENDA_CORREO || '',
+    // WhatsApp de la tienda a 10 dígitos (se le antepone 52). Vacío = sin botón de WhatsApp.
+    whatsapp: (env.TIENDA_WHATSAPP || '').replace(/\D/g, '').slice(-10),
+    telefono: (env.TIENDA_TELEFONO || '').replace(/\D/g, '').slice(-10),
+    horario: env.TIENDA_HORARIO || 'Todos los días de 7:00 a 23:00',
+    zonaEnvio: env.TIENDA_ZONA_ENVIO || 'Colonias cercanas a la tienda',
   },
 
   admin: {

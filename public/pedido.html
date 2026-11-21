@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="es-MX">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Haz tu pedido · SuperMass Abarrotes</title>
+  <meta name="description" content="Arma tu pedido de SuperMass y te lo llevamos a domicilio, o pásalo a recoger. Tus pedidos también suman puntos.">
+  <meta name="theme-color" content="#C00812">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="{{PAGE_URL}}">
+  <meta property="og:title" content="SuperMass a domicilio · Haz tu pedido">
+  <meta property="og:description" content="Arma tu pedido en un minuto y te lo llevamos. También suma puntos del Club SuperMass.">
+  <meta property="og:image" content="{{OG_IMAGE}}">
+  <link rel="icon" href="/img/favicon-48.png" type="image/png">
+  <link rel="apple-touch-icon" href="/img/apple-touch-icon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@700;800&family=Nunito:wght@500;600;700;800&display=swap">
+  <link rel="stylesheet" href="/css/styles.css">
+  <link rel="stylesheet" href="/css/club.css">
+</head>
+<body class="con-tabbar">
+  <div class="fondo" aria-hidden="true">
+    <span class="mancha m1"></span><span class="mancha m2"></span><span class="mancha m3"></span><span class="mancha m4"></span>
+  </div>
+  <a class="saltar" href="#contenido">Ir al contenido</a>
+
+  <header class="nav vidrio">
+    <a href="/" class="nav-logo" aria-label="SuperMass, inicio"><img src="/logo" alt="SuperMass Abarrotes" width="589" height="426"></a>
+    <nav class="nav-enlaces" aria-label="Principal">
+      <a href="/#premios">Premios</a>
+      <a href="/pedido" aria-current="page">Pedir a domicilio</a>
+      <a href="/buzon">Buzón</a>
+    </nav>
+    <a href="/club" class="nav-tarjeta" id="nav-tarjeta">Mi tarjeta</a>
+  </header>
+
+  <main id="contenido" class="medio">
+    <!-- Paso 1: productos -->
+    <div id="paso-productos">
+      <header class="pedido-cabeza">
+        <p class="eyebrow">Pedidos a domicilio</p>
+        <h1>¿Qué te llevamos?</h1>
+        <p class="lead">Agrega lo que necesitas. Al final lo mandamos a la tienda por WhatsApp.</p>
+        <ul class="info-chips">
+          <li>🕒 {{TIENDA_HORARIO}}</li>
+          <li id="chip-envio">🛵 Envío</li>
+          <li>⭐ Suma puntos</li>
+        </ul>
+      </header>
+
+      <div class="buscador vidrio">
+        <label class="sr" for="buscar">Buscar producto</label>
+        <input id="buscar" type="search" placeholder="Buscar: leche, huevo, refresco…" autocomplete="off">
+        <div class="cats" id="cats" role="group" aria-label="Categorías"></div>
+      </div>
+
+      <div id="catalogo" aria-live="polite"><p class="sin-resultados">Cargando productos…</p></div>
+
+      <section class="vidrio bloque" aria-labelledby="t-extra">
+        <h2 id="t-extra">¿No ves algo? Escríbelo</h2>
+        <label class="sr" for="extra">Otros productos</label>
+        <textarea id="extra" maxlength="500" placeholder="Ej. 1 kg de jitomate, chiles serranos, 2 jabones Zote…"></textarea>
+        <p class="ayuda">Lo confirmamos por WhatsApp con el precio exacto.</p>
+      </section>
+
+      <p class="centrado mt"><button class="btn btn-amarillo" type="button" id="ir-datos">Continuar con mis datos</button></p>
+    </div>
+
+    <!-- Paso 2: datos -->
+    <section id="paso-datos" class="vidrio tarjeta mt" hidden aria-labelledby="t-datos">
+      <button class="btn btn-vidrio btn-chico-vidrio" type="button" id="volver">← Seguir comprando</button>
+      <h1 class="subtitulo mt" id="t-datos">Tus datos de entrega</h1>
+      <form id="form-pedido" novalidate>
+        <div class="trampa" aria-hidden="true"><label>No llenes <input type="text" name="sitio" tabindex="-1" autocomplete="off"></label></div>
+        <div class="campo">
+          <label for="nombre">Nombre</label>
+          <input id="nombre" type="text" maxlength="120" autocomplete="name" required aria-describedby="nombre-error">
+          <p id="nombre-error" class="error" aria-live="polite"></p>
+        </div>
+        <div class="campo">
+          <label for="telefono">Celular</label>
+          <input id="telefono" type="tel" inputmode="numeric" maxlength="10" autocomplete="tel-national" required aria-describedby="telefono-ayuda telefono-error" placeholder="Ej. 5512345678">
+          <p id="telefono-ayuda" class="ayuda">Si tienes tarjeta del Club, usa ese número para sumar tus puntos.</p>
+          <p id="telefono-error" class="error" aria-live="polite"></p>
+        </div>
+        <fieldset class="campo">
+          <legend>¿Cómo lo quieres?</legend>
+          <div class="chips">
+            <label class="chip"><input type="radio" name="entrega" value="domicilio" checked><span>🛵 A domicilio</span></label>
+            <label class="chip"><input type="radio" name="entrega" value="recoger"><span>🏪 Paso a recoger</span></label>
+          </div>
+        </fieldset>
+        <div class="campo" id="campo-direccion">
+          <label for="direccion">Dirección</label>
+          <textarea id="direccion" maxlength="300" autocomplete="street-address" aria-describedby="direccion-error" placeholder="Calle, número, colonia y una referencia (ej. portón verde)"></textarea>
+          <p id="direccion-error" class="error" aria-live="polite"></p>
+        </div>
+        <fieldset class="campo">
+          <legend>¿Cómo pagas?</legend>
+          <div class="chips">
+            <label class="chip"><input type="radio" name="pago" value="efectivo" checked><span>Efectivo</span></label>
+            <label class="chip"><input type="radio" name="pago" value="tarjeta"><span>Tarjeta</span></label>
+            <label class="chip"><input type="radio" name="pago" value="transferencia"><span>Transferencia</span></label>
+          </div>
+        </fieldset>
+        <div class="campo">
+          <label for="notas">Notas <span class="opcional">(opcional)</span></label>
+          <input id="notas" type="text" maxlength="200" placeholder="Ej. traigo billete de $500">
+        </div>
+
+        <ul class="resumen-pedido" id="resumen"></ul>
+        <p class="gana" id="gana"></p>
+
+        <p id="error-general" class="error error-general" role="alert"></p>
+        <button class="btn btn-amarillo" type="submit" id="enviar"><span class="btn-texto">Enviar pedido</span><span class="girador" aria-hidden="true"></span></button>
+      </form>
+    </section>
+
+    <!-- Paso 3: listo -->
+    <section id="paso-listo" class="vidrio tarjeta mt exito" hidden tabindex="-1" aria-labelledby="t-listo">
+      <div class="exito-icono" aria-hidden="true"><svg viewBox="0 0 24 24" width="44" height="44"><path fill="currentColor" d="M9.5 16.2 5.3 12l-1.4 1.4 5.6 5.6 11-11-1.4-1.4z"/></svg></div>
+      <h1 class="subtitulo" id="t-listo">¡Pedido recibido!</h1>
+      <p>Tu folio es</p>
+      <p class="exito-ticket" id="folio">—</p>
+      <p class="exito-nota" id="listo-texto"></p>
+      <div class="compartir">
+        <a class="btn btn-whatsapp" id="abrir-wa" href="#" target="_blank" rel="noopener" hidden>Enviar por WhatsApp</a>
+        <a class="btn btn-amarillo" id="unirme" href="/club" hidden>Crear mi tarjeta y sumar puntos</a>
+      </div>
+      <a class="btn btn-vidrio" href="/pedido">Hacer otro pedido</a>
+    </section>
+  </main>
+
+  <div class="carrito-barra" id="carrito-barra" aria-live="polite">
+    <div><strong id="cb-total">$0.00</strong><span id="cb-items">0 productos</span></div>
+    <button class="btn" type="button" id="cb-continuar">Continuar →</button>
+  </div>
+
+  <nav class="tabbar vidrio" aria-label="Accesos rápidos">
+    <a href="/"><svg aria-hidden="true" viewBox="0 0 24 24"><path fill="currentColor" d="M12 3 2 11h3v9h5v-6h4v6h5v-9h3z"/></svg>Inicio</a>
+    <a href="/club"><svg aria-hidden="true" viewBox="0 0 24 24"><path fill="currentColor" d="M3 5h18a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1zm1 4v2h16V9zm0 5v2h6v-2z"/></svg>Mi tarjeta</a>
+    <a href="/pedido" aria-current="page"><svg aria-hidden="true" viewBox="0 0 24 24"><path fill="currentColor" d="M7 18a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm10 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4zM5.2 4H2V2h4.5l.9 2H22l-3.6 8.5a2 2 0 0 1-1.8 1.2H8.1l-.9 1.8V16H19v2H7a2 2 0 0 1-1.8-2.9l1.4-2.6z"/></svg>Pedir</a>
+    <a href="/buzon"><svg aria-hidden="true" viewBox="0 0 24 24"><path fill="currentColor" d="M4 3h16a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H8l-5 4V5a2 2 0 0 1 1-2zm3 5v2h10V8zm0 4v2h7v-2z"/></svg>Buzón</a>
+  </nav>
+
+  <script type="application/json" id="config">{{CONFIG_JSON}}</script>
+  <script src="/js/comun.js" defer></script>
+  <script src="/js/pedido.js" defer></script>
+</body>
+</html>

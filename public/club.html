@@ -1,0 +1,196 @@
+<!doctype html>
+<html lang="es-MX">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Mi tarjeta · Club SuperMass</title>
+  <meta name="description" content="Tu tarjeta del Club SuperMass: revisa tus puntos, canjea premios e invita a tus vecinos.">
+  <meta name="theme-color" content="#C00812">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="{{PAGE_URL}}">
+  <meta property="og:title" content="Te invito al Club SuperMass: {{CLUB_BIENVENIDA}} puntos de regalo">
+  <meta property="og:description" content="Crea tu tarjeta gratis, junta puntos en cada compra y cámbialos por productos gratis.">
+  <meta property="og:image" content="{{OG_IMAGE}}">
+  <link rel="icon" href="/img/favicon-48.png" type="image/png">
+  <link rel="apple-touch-icon" href="/img/apple-touch-icon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@700;800&family=Nunito:wght@500;600;700;800&display=swap">
+  <link rel="stylesheet" href="/css/styles.css">
+  <link rel="stylesheet" href="/css/club.css">
+</head>
+<body class="con-tabbar">
+  <div class="fondo" aria-hidden="true">
+    <span class="mancha m1"></span><span class="mancha m2"></span><span class="mancha m3"></span><span class="mancha m4"></span>
+  </div>
+  <a class="saltar" href="#contenido">Ir al contenido</a>
+
+  <header class="nav vidrio">
+    <a href="/" class="nav-logo" aria-label="SuperMass, inicio"><img src="/logo" alt="SuperMass Abarrotes" width="589" height="426"></a>
+    <nav class="nav-enlaces" aria-label="Principal">
+      <a href="/#premios">Premios</a>
+      <a href="/pedido">Pedir a domicilio</a>
+      <a href="/buzon">Buzón</a>
+    </nav>
+    <a href="/club" class="nav-tarjeta" id="nav-tarjeta" aria-current="page">Mi tarjeta</a>
+  </header>
+
+  <main id="contenido">
+    <p class="medio nota-info" id="cargando">Cargando tu tarjeta…</p>
+
+    <!-- ===== Sin sesión ===== -->
+    <section class="medio" id="vista-acceso" hidden>
+      <div class="seccion-cabeza centro seccion">
+        <p class="eyebrow">Club SuperMass</p>
+        <h1 class="h2">Tu tarjeta de puntos</h1>
+        <p class="lead">Gratis, en un minuto, y con {{CLUB_BIENVENIDA}} puntos de regalo.</p>
+      </div>
+
+      <div class="vidrio tarjeta">
+        <div class="segmento" role="tablist" aria-label="Acceso">
+          <button role="tab" id="tab-alta" aria-selected="true" aria-controls="form-alta">Crear mi tarjeta</button>
+          <button role="tab" id="tab-entrar" aria-selected="false" aria-controls="form-entrar" tabindex="-1">Ya tengo tarjeta</button>
+        </div>
+
+        <p class="nota-ok" id="aviso-ref" hidden></p>
+
+        <!-- Alta -->
+        <form id="form-alta" role="tabpanel" aria-labelledby="tab-alta" novalidate>
+          <div class="trampa" aria-hidden="true"><label>No llenes <input type="text" name="sitio" tabindex="-1" autocomplete="off"></label></div>
+          <div class="campo">
+            <label for="a-nombre">Tu nombre</label>
+            <input id="a-nombre" type="text" maxlength="120" autocomplete="name" autocapitalize="words" required aria-describedby="a-nombre-error" placeholder="Ej. María López">
+            <p id="a-nombre-error" class="error" aria-live="polite"></p>
+          </div>
+          <div class="campo">
+            <label for="a-telefono">Celular a 10 dígitos</label>
+            <input id="a-telefono" type="tel" inputmode="numeric" maxlength="10" autocomplete="tel-national" required aria-describedby="a-telefono-ayuda a-telefono-error" placeholder="Ej. 5512345678">
+            <p id="a-telefono-ayuda" class="ayuda">Es tu número de socio: lo dices en caja para sumar puntos.</p>
+            <p id="a-telefono-error" class="error" aria-live="polite"></p>
+          </div>
+          <div class="campo">
+            <label for="a-pin">Crea un NIP de 4 números</label>
+            <input id="a-pin" class="pin" type="password" inputmode="numeric" maxlength="4" autocomplete="new-password" required aria-describedby="a-pin-ayuda a-pin-error" placeholder="••••">
+            <p id="a-pin-ayuda" class="ayuda">Para que solo tú puedas canjear tus puntos.</p>
+            <p id="a-pin-error" class="error" aria-live="polite"></p>
+          </div>
+          <fieldset class="campo">
+            <legend>Tu cumpleaños <span class="opcional">(opcional, para darte puntos dobles)</span></legend>
+            <div class="fila2">
+              <label class="sr" for="a-dia">Día</label>
+              <select id="a-dia"><option value="">Día</option></select>
+              <label class="sr" for="a-mes">Mes</label>
+              <select id="a-mes"><option value="">Mes</option></select>
+            </div>
+          </fieldset>
+          <div class="campo check">
+            <input id="a-privacidad" type="checkbox" value="si" required aria-describedby="a-privacidad-error">
+            <label for="a-privacidad">Acepto el <a href="/aviso-privacidad" target="_blank" rel="noopener">aviso de privacidad</a>.</label>
+            <p id="a-privacidad-error" class="error" aria-live="polite"></p>
+          </div>
+          <p id="a-error" class="error error-general" role="alert"></p>
+          <button class="btn btn-amarillo" type="submit" id="a-enviar"><span class="btn-texto">Crear mi tarjeta gratis</span><span class="girador" aria-hidden="true"></span></button>
+        </form>
+
+        <!-- Entrar -->
+        <form id="form-entrar" role="tabpanel" aria-labelledby="tab-entrar" novalidate hidden>
+          <div class="campo">
+            <label for="e-telefono">Celular</label>
+            <input id="e-telefono" type="tel" inputmode="numeric" maxlength="10" autocomplete="tel-national" required aria-describedby="e-telefono-error" placeholder="Ej. 5512345678">
+            <p id="e-telefono-error" class="error" aria-live="polite"></p>
+          </div>
+          <div class="campo">
+            <label for="e-pin">NIP</label>
+            <input id="e-pin" class="pin" type="password" inputmode="numeric" maxlength="4" autocomplete="current-password" required aria-describedby="e-pin-error" placeholder="••••">
+            <p id="e-pin-error" class="error" aria-live="polite"></p>
+          </div>
+          <p id="e-error" class="error error-general" role="alert"></p>
+          <button class="btn btn-amarillo" type="submit" id="e-enviar"><span class="btn-texto">Ver mis puntos</span><span class="girador" aria-hidden="true"></span></button>
+          <p class="ayuda centrado">¿Te registraron en caja? Usa «Crear mi tarjeta» con el mismo celular y tus puntos te estarán esperando.</p>
+        </form>
+      </div>
+    </section>
+
+    <!-- ===== Con sesión ===== -->
+    <div class="ancho" id="vista-socio" hidden>
+      <section class="socio-top" aria-labelledby="t-saludo">
+        <div>
+          <h1 class="sr" id="t-saludo">Mi tarjeta</h1>
+          <div class="tarjeta-socio" id="mi-tarjeta">
+            <div class="ts-cabeza">
+              <div class="ts-marca">SUPERMASS<small>CLUB DE CLIENTES</small></div>
+              <span class="ts-nivel" id="s-nivel"></span>
+            </div>
+            <div class="ts-puntos"><strong id="s-puntos">0</strong><span>puntos para canjear</span></div>
+            <div class="ts-pie">
+              <div class="ts-nombre"><span id="s-nombre"></span><small id="s-tel"></small></div>
+              <div class="ts-barras" aria-hidden="true"></div>
+            </div>
+          </div>
+          <p class="di-tu-cel">En caja di tu celular: <strong id="s-tel2"></strong></p>
+        </div>
+
+        <div class="vidrio progreso">
+          <h2 id="p-titulo"></h2>
+          <p id="p-texto"></p>
+          <div class="barra-prog" aria-hidden="true"><span id="p-barra"></span></div>
+          <p class="nota-ok" id="p-cumple" hidden>🎂 ¡Es tu mes de cumpleaños! Todas tus compras suman puntos dobles.</p>
+          <div class="mini-stats">
+            <div><strong id="m-compras">0</strong><span>compras</span></div>
+            <div><strong id="m-historicos">0</strong><span>pts ganados</span></div>
+            <div><strong id="m-invitados">0</strong><span>invitados</span></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="vidrio bloque" id="bloque-codigos" hidden aria-labelledby="t-codigos">
+        <h2 id="t-codigos">Tus premios por recoger</h2>
+        <p class="ayuda-general">Muestra el código en caja y te entregamos tu premio.</p>
+        <div class="codigos" id="codigos"></div>
+      </section>
+
+      <section class="bloque" aria-labelledby="t-canjear">
+        <h2 id="t-canjear" class="h2">Canjea tus puntos</h2>
+        <div class="premios" id="premios-socio"></div>
+      </section>
+
+      <section class="vidrio bloque invitar" aria-labelledby="t-invitar">
+        <h2 id="t-invitar">Invita a tus vecinos y ganen los dos</h2>
+        <p class="ayuda-general">Cuando tu invitado haga su primera compra, a cada uno le damos <strong>{{CLUB_REFERIDO}} puntos</strong>.</p>
+        <div class="enlace-copia">
+          <label class="sr" for="ref-url">Tu enlace de invitación</label>
+          <input id="ref-url" type="text" readonly>
+          <button class="btn btn-chico" type="button" id="copiar">Copiar</button>
+        </div>
+        <a class="btn btn-whatsapp" id="invitar-wa" href="#" target="_blank" rel="noopener">Invitar por WhatsApp</a>
+      </section>
+
+      <section class="vidrio bloque" aria-labelledby="t-hist">
+        <h2 id="t-hist">Movimientos</h2>
+        <ul class="historial" id="historial"></ul>
+      </section>
+
+      <p class="centrado mt"><button class="btn btn-vidrio" type="button" id="salir">Cerrar sesión</button></p>
+    </div>
+  </main>
+
+  <dialog class="modal-club" id="modal" aria-labelledby="modal-titulo">
+    <div class="vidrio caja">
+      <h2 id="modal-titulo"></h2>
+      <div id="modal-cuerpo"></div>
+      <div class="acciones-modal" id="modal-acciones"></div>
+    </div>
+  </dialog>
+
+  <nav class="tabbar vidrio" aria-label="Accesos rápidos">
+    <a href="/"><svg aria-hidden="true" viewBox="0 0 24 24"><path fill="currentColor" d="M12 3 2 11h3v9h5v-6h4v6h5v-9h3z"/></svg>Inicio</a>
+    <a href="/club" aria-current="page"><svg aria-hidden="true" viewBox="0 0 24 24"><path fill="currentColor" d="M3 5h18a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1zm1 4v2h16V9zm0 5v2h6v-2z"/></svg>Mi tarjeta</a>
+    <a href="/pedido"><svg aria-hidden="true" viewBox="0 0 24 24"><path fill="currentColor" d="M7 18a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm10 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4zM5.2 4H2V2h4.5l.9 2H22l-3.6 8.5a2 2 0 0 1-1.8 1.2H8.1l-.9 1.8V16H19v2H7a2 2 0 0 1-1.8-2.9l1.4-2.6z"/></svg>Pedir</a>
+    <a href="/buzon"><svg aria-hidden="true" viewBox="0 0 24 24"><path fill="currentColor" d="M4 3h16a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H8l-5 4V5a2 2 0 0 1 1-2zm3 5v2h10V8zm0 4v2h7v-2z"/></svg>Buzón</a>
+  </nav>
+
+  <script type="application/json" id="config">{{CONFIG_JSON}}</script>
+  <script src="/js/comun.js" defer></script>
+  <script src="/js/club.js" defer></script>
+</body>
+</html>

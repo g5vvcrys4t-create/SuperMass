@@ -5,8 +5,7 @@
       "name": "supermass",
       "runtimeExecutable": "node",
       "runtimeArgs": ["server.js"],
-      "port": 3000,
-      "env": { "ADMIN_PASSWORD": "prueba123", "PORT": "3000" }
+      "port": 3100
     }
   ]
 }

@@ -3,198 +3,261 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <title>{{RIFA_NOMBRE}} · SuperMass Abarrotes</title>
-  <meta name="description" content="¡Gánate {{RIFA_PREMIO}}! Compra en SuperMass, guarda tu ticket y regístralo aquí para participar. Sorteo: {{RIFA_FECHA}}.">
-  <meta name="theme-color" content="#D7141A">
-
+  <title>Club SuperMass · Junta puntos y gana despensa gratis</title>
+  <meta name="description" content="Únete gratis al Club SuperMass: junta puntos en cada compra y cámbialos por productos gratis. Haz tu pedido por WhatsApp y te lo llevamos.">
+  <meta name="theme-color" content="#C00812">
   <meta property="og:type" content="website">
   <meta property="og:url" content="{{PAGE_URL}}">
   <meta property="og:site_name" content="SuperMass Abarrotes">
   <meta property="og:locale" content="es_MX">
-  <meta property="og:title" content="{{RIFA_NOMBRE}} · SuperMass Abarrotes">
-  <meta property="og:description" content="¡Gánate {{RIFA_PREMIO}}! Compra en SuperMass, registra tu ticket y participa. Sorteo: {{RIFA_FECHA}}.">
+  <meta property="og:title" content="Club SuperMass · Cada compra te regresa premios">
+  <meta property="og:description" content="Tarjeta gratis, {{CLUB_BIENVENIDA}} puntos de regalo al unirte y productos gratis con tus puntos. Pedidos por WhatsApp.">
   <meta property="og:image" content="{{OG_IMAGE}}">
-  <meta property="og:image:type" content="image/png">
-  <meta property="og:image:width" content="1200">
-  <meta property="og:image:height" content="630">
-  <meta property="og:image:alt" content="Logo de SuperMass con el premio de la rifa: {{RIFA_PREMIO}}">
   <meta name="twitter:card" content="summary_large_image">
-
-  <link rel="icon" href="/img/favicon.svg" type="image/svg+xml">
+  <link rel="icon" href="/img/favicon-48.png" type="image/png">
+  <link rel="apple-touch-icon" href="/img/apple-touch-icon.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@700;800&family=Nunito:wght@500;600;700;800&display=swap">
   <link rel="stylesheet" href="/css/styles.css">
+  <link rel="stylesheet" href="/css/club.css">
 </head>
-<body>
+<body class="con-tabbar">
   <div class="fondo" aria-hidden="true">
     <span class="mancha m1"></span><span class="mancha m2"></span><span class="mancha m3"></span><span class="mancha m4"></span>
   </div>
+  <a class="saltar" href="#contenido">Ir al contenido</a>
 
-  <a class="saltar" href="#registro">Ir directo al registro</a>
-
-  <header class="contenedor hero">
-    <div class="vidrio logo-panel">
-      <img src="/logo" alt="SuperMass Abarrotes – Cerca de ti" width="560" height="200">
-    </div>
-    <p class="etiqueta">🎉 Rifa para nuestros clientes</p>
-    <h1 class="titulo">{{RIFA_NOMBRE}}</h1>
-
-    <div class="vidrio premio">
-      <span class="premio-label">Premio principal</span>
-      <strong class="premio-nombre">{{RIFA_PREMIO}}</strong>
-      <span class="premio-fecha">
-        <svg aria-hidden="true" viewBox="0 0 24 24" width="20" height="20"><path fill="currentColor" d="M7 2h2v2h6V2h2v2h3a1 1 0 0 1 1 1v15a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a1 1 0 0 1 1-1h3zm12 8H5v10h14z"/></svg>
-        Sorteo: {{RIFA_FECHA}}
-      </span>
-    </div>
-
-    <p class="intro">Compra en SuperMass, guarda tu ticket y regístralo aquí para participar.</p>
+  <header class="nav vidrio">
+    <a href="/" class="nav-logo" aria-label="SuperMass, inicio"><img src="/logo" alt="SuperMass Abarrotes" width="589" height="426"></a>
+    <nav class="nav-enlaces" aria-label="Principal">
+      <a href="#como">Cómo funciona</a>
+      <a href="#premios">Premios</a>
+      <a href="/pedido">Pedir a domicilio</a>
+      <a href="/buzon">Buzón</a>
+    </nav>
+    <a href="/club" class="nav-tarjeta" id="nav-tarjeta">Mi tarjeta</a>
   </header>
 
-  <main class="contenedor">
-    <section id="registro" class="vidrio tarjeta registro" aria-labelledby="t-registro">
-      <div id="bloque-form">
-        <h2 id="t-registro" class="subtitulo">Registra tu ticket</h2>
-        <p class="ayuda-general">Te toma un minuto. Ten a la mano tu ticket de compra.</p>
-
-        <div id="cerrado" class="aviso" hidden>El registro para esta rifa ya cerró. ¡Gracias por participar!</div>
-
-        <form id="form" novalidate>
-          <div class="trampa" aria-hidden="true">
-            <label>No llenes este campo <input type="text" name="sitio" tabindex="-1" autocomplete="off"></label>
-          </div>
-
-          <div class="campo">
-            <label for="ticket">Número de ticket (folio)</label>
-            <input id="ticket" name="ticket" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="12"
-                   autocomplete="off" required aria-describedby="ticket-ayuda ticket-error" placeholder="Ej. 004512">
-            <p id="ticket-ayuda" class="ayuda">Viene impreso en tu ticket. Solo números, hasta 12.</p>
-            <p id="ticket-error" class="error" aria-live="polite"></p>
-          </div>
-
-          <div class="campo">
-            <label for="nombre">Nombre completo</label>
-            <input id="nombre" name="nombre" type="text" maxlength="120" autocomplete="name" autocapitalize="words"
-                   required aria-describedby="nombre-error" placeholder="Como aparece en tu INE">
-            <p id="nombre-error" class="error" aria-live="polite"></p>
-          </div>
-
-          <div class="campo">
-            <label for="telefono">Teléfono a 10 dígitos</label>
-            <input id="telefono" name="telefono" type="tel" inputmode="numeric" maxlength="10" autocomplete="tel-national"
-                   required aria-describedby="telefono-ayuda telefono-error" placeholder="Ej. 5512345678">
-            <p id="telefono-ayuda" class="ayuda">Te llamamos aquí si sales ganador.</p>
-            <p id="telefono-error" class="error" aria-live="polite"></p>
-          </div>
-
-          <fieldset class="campo foto" aria-describedby="foto-ayuda foto-error">
-            <legend>Foto del ticket</legend>
-            <p id="foto-ayuda" class="ayuda">Que se vean bien el folio y el total.</p>
-            <div class="foto-botones" id="foto-botones">
-              <label class="btn btn-vidrio" for="foto-camara">
-                <svg aria-hidden="true" viewBox="0 0 24 24" width="22" height="22"><path fill="currentColor" d="M9 3h6l2 3h3a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h3zm3 5a5 5 0 1 0 0 10 5 5 0 0 0 0-10zm0 2a3 3 0 1 1 0 6 3 3 0 0 1 0-6z"/></svg>
-                Tomar foto
-              </label>
-              <input class="sr-input" id="foto-camara" type="file" accept="image/*" capture="environment">
-              <label class="btn btn-vidrio" for="foto-galeria">
-                <svg aria-hidden="true" viewBox="0 0 24 24" width="22" height="22"><path fill="currentColor" d="M4 4h16a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2zm0 14h16l-5-7-4 5-3-3zM8 7a2 2 0 1 0 0 4 2 2 0 0 0 0-4z"/></svg>
-                Subir de galería
-              </label>
-              <input class="sr-input" id="foto-galeria" type="file" accept="image/*">
-            </div>
-            <div class="foto-preview" id="foto-preview" hidden>
-              <img id="foto-img" alt="Vista previa de la foto de tu ticket">
-              <button type="button" class="btn btn-chico" id="foto-quitar">Cambiar foto</button>
-            </div>
-            <p id="foto-error" class="error" aria-live="polite"></p>
-          </fieldset>
-
-          <div class="campo check">
-            <input id="privacidad" name="privacidad" type="checkbox" value="si" required aria-describedby="privacidad-error">
-            <label for="privacidad">Leí y acepto el <a href="/aviso-privacidad" target="_blank" rel="noopener">aviso de privacidad</a>.</label>
-            <p id="privacidad-error" class="error" aria-live="polite"></p>
-          </div>
-
-          <p id="error-general" class="error error-general" role="alert"></p>
-
-          <button type="submit" class="btn btn-amarillo" id="enviar">
-            <span class="btn-texto">Registrar mi ticket</span>
-            <span class="girador" aria-hidden="true"></span>
-          </button>
-        </form>
+  <main id="contenido" class="ancho">
+    <!-- HERO -->
+    <section class="hero-club" aria-labelledby="t-hero">
+      <div>
+        <p class="eyebrow">SuperMass · Cerca de ti · Los Magueyes</p>
+        <h1 id="t-hero">Compra lo de siempre. <em>Llévate premios.</em></h1>
+        <p class="lead">Junta puntos en cada compra y cámbialos por productos gratis. Solo das tu celular en caja.</p>
+        <div class="ctas">
+          <a class="btn btn-amarillo" href="/club">Crear mi tarjeta <span class="bono-pill">+{{CLUB_BIENVENIDA}} pts</span></a>
+          <a class="btn btn-vidrio" href="/pedido">Pedir a domicilio</a>
+        </div>
+        <ul class="confianza">
+          <li>Sin costo</li>
+          <li>Sin descargar apps</li>
+          <li>Puntos al instante</li>
+        </ul>
       </div>
-
-      <div id="exito" class="exito" hidden tabindex="-1" aria-labelledby="t-exito">
-        <div class="exito-icono" aria-hidden="true">
-          <svg viewBox="0 0 24 24" width="44" height="44"><path fill="currentColor" d="M9.5 16.2 5.3 12l-1.4 1.4 5.6 5.6 11-11-1.4-1.4z"/></svg>
+      <div aria-hidden="true">
+        <div class="tarjeta-socio flotante">
+          <div class="ts-cabeza">
+            <div class="ts-marca">SUPERMASS<small>CLUB DE CLIENTES</small></div>
+            <span class="ts-nivel">Consentido</span>
+          </div>
+          <div class="ts-puntos"><strong id="demo-pts">1,240</strong><span>puntos para canjear</span></div>
+          <div class="ts-pie">
+            <div class="ts-nombre">Tu nombre aquí<small>55 •••• 5678</small></div>
+            <div class="ts-barras"></div>
+          </div>
         </div>
-        <h2 id="t-exito" class="subtitulo">¡Listo, ya estás participando!</h2>
-        <p>Registramos tu ticket:</p>
-        <p class="exito-ticket" id="exito-ticket">—</p>
-        <p class="exito-nota">Tu registro queda <strong>pendiente</strong> mientras revisamos la foto. Guarda tu ticket físico: lo vas a necesitar para reclamar el premio.</p>
-        <p class="exito-compartir">¡Pásale la voz a tu familia y vecinos!</p>
-        <div class="compartir">
-          <a class="btn btn-facebook" id="compartir-fb" href="#" target="_blank" rel="noopener">
-            <svg aria-hidden="true" viewBox="0 0 24 24" width="22" height="22"><path fill="currentColor" d="M13.5 22v-8h2.7l.4-3.2h-3.1V8.8c0-.9.3-1.5 1.6-1.5h1.7V4.4a23 23 0 0 0-2.5-.1c-2.5 0-4.2 1.5-4.2 4.3v2.3H7.4V14h2.7v8z"/></svg>
-            Compartir en Facebook
-          </a>
-          <a class="btn btn-whatsapp" id="compartir-wa" href="#" target="_blank" rel="noopener">
-            <svg aria-hidden="true" viewBox="0 0 24 24" width="22" height="22"><path fill="currentColor" d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm0 18.2a8.2 8.2 0 0 1-4.2-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8s-.4-.1-.6.1l-.8 1c-.1.2-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.3-.4.3-.4.7-1.3.1-.2 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 3 3 0 0 0-.9 2.2 5.1 5.1 0 0 0 1.1 2.7 11.6 11.6 0 0 0 4.5 4c1.7.7 2.3.8 3.2.6a2.7 2.7 0 0 0 1.7-1.2 2.2 2.2 0 0 0 .2-1.2c-.1-.1-.3-.2-.5-.3z"/></svg>
-            Compartir por WhatsApp
-          </a>
-        </div>
-        <button type="button" class="btn btn-vidrio" id="otro">Registrar otro ticket</button>
       </div>
     </section>
 
-    <section class="pasos" aria-labelledby="t-pasos">
-      <h2 id="t-pasos" class="subtitulo centrado">Cómo participar</h2>
-      <ol class="pasos-lista">
-        <li class="vidrio paso">
-          <span class="paso-num" aria-hidden="true">1</span>
-          <svg class="paso-icono" aria-hidden="true" viewBox="0 0 24 24" width="40" height="40"><path fill="currentColor" d="M7 18a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm10 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4zM5.2 4H2V2h4.5l.9 2H22l-3.6 8.5a2 2 0 0 1-1.8 1.2H8.1l-.9 1.8V16H19v2H7a2 2 0 0 1-1.8-2.9l1.4-2.6z"/></svg>
-          <h3>Compra</h3>
-          <p>Haz tus compras en SuperMass y pide tu ticket.</p>
+    <a class="banda vidrio" href="/rifa" id="banda-rifa" hidden>
+      <span class="banda-icono" aria-hidden="true">🎄</span>
+      <span class="banda-texto"><strong>{{RIFA_NOMBRE}}</strong><span>Registra tu ticket y gana {{RIFA_PREMIO}}. Sorteo: {{RIFA_FECHA}}.</span></span>
+      <span class="banda-flecha" aria-hidden="true">→</span>
+    </a>
+
+    <!-- VISÍTANOS -->
+    <section class="seccion" id="visitanos" aria-labelledby="t-visitanos">
+      <div class="vidrio visita">
+        <img class="visita-foto" src="/img/fachada.jpg" alt="Fachada de la tienda SuperMass en Calle Agave, Los Magueyes" width="1200" height="656" loading="lazy">
+        <div class="visita-info">
+          <p class="eyebrow">Más barato para tu hogar</p>
+          <h2 class="h2" id="t-visitanos">Tu súper de confianza, a unos pasos</h2>
+          <ul class="deptos" aria-label="Departamentos">
+            <li>Abarrotes</li><li>Bebidas</li><li>Cremería</li><li>Farmacia</li><li>Vinos y licores</li><li>Hogar</li>
+          </ul>
+          <ul class="datos-lista">
+            <li><svg aria-hidden="true" viewBox="0 0 24 24" width="24" height="24"><path fill="currentColor" d="M12 2a7 7 0 0 1 7 7c0 5-7 13-7 13S5 14 5 9a7 7 0 0 1 7-7zm0 4.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5z"/></svg><span>{{TIENDA_DIRECCION}}</span></li>
+            <li><svg aria-hidden="true" viewBox="0 0 24 24" width="24" height="24"><path fill="currentColor" d="M12 2a10 10 0 1 1 0 20 10 10 0 0 1 0-20zm1 5h-2v6l5 3 1-1.7-4-2.3z"/></svg><span>{{TIENDA_HORARIO}}</span></li>
+            <li><svg aria-hidden="true" viewBox="0 0 24 24" width="24" height="24"><path fill="currentColor" d="M6.6 10.8a15 15 0 0 0 6.6 6.6l2.2-2.2a1 1 0 0 1 1-.25 11.4 11.4 0 0 0 3.6.57 1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1c0 1.25.2 2.45.57 3.6a1 1 0 0 1-.25 1z"/></svg><span>{{TIENDA_TELEFONO}}</span></li>
+          </ul>
+          <div class="ctas mt">
+            <a class="btn btn-amarillo" href="{{MAPS_URL}}" target="_blank" rel="noopener">Cómo llegar</a>
+            <a class="btn btn-vidrio" href="{{TEL_URL}}">Llamar a la tienda</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CÓMO FUNCIONA -->
+    <section class="seccion" id="como" aria-labelledby="t-como">
+      <div class="seccion-cabeza">
+        <p class="eyebrow">Así de fácil</p>
+        <h2 class="h2" id="t-como">Tres pasos y ya estás ganando</h2>
+      </div>
+      <ol class="pasos3">
+        <li class="vidrio">
+          <span class="num-paso" aria-hidden="true">1</span>
+          <h3>Crea tu tarjeta</h3>
+          <p>Con tu nombre y celular, en un minuto. Te regalamos {{CLUB_BIENVENIDA}} puntos para empezar.</p>
         </li>
-        <li class="vidrio paso">
-          <span class="paso-num" aria-hidden="true">2</span>
-          <svg class="paso-icono" aria-hidden="true" viewBox="0 0 24 24" width="40" height="40"><path fill="currentColor" d="M6 2h12a1 1 0 0 1 1 1v19l-3-2-2 2-2-2-2 2-2-2-3 2V3a1 1 0 0 1 1-1zm2 5v2h8V7zm0 4v2h8v-2zm0 4v2h5v-2z"/></svg>
-          <h3>Registra tu ticket</h3>
-          <p>Llena el formulario con tu folio y una foto del ticket.</p>
+        <li class="vidrio">
+          <span class="num-paso" aria-hidden="true">2</span>
+          <h3>Di tu celular en caja</h3>
+          <p>Por cada ${{CLUB_PESOS_PUNTO}} de compra ganas 1 punto. También en tus pedidos a domicilio.</p>
         </li>
-        <li class="vidrio paso">
-          <span class="paso-num" aria-hidden="true">3</span>
-          <svg class="paso-icono" aria-hidden="true" viewBox="0 0 24 24" width="40" height="40"><path fill="currentColor" d="M20 7h-2.2A3 3 0 0 0 12 3.8 3 3 0 0 0 6.2 7H4a1 1 0 0 0-1 1v3a1 1 0 0 0 1 1h1v8a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-8h1a1 1 0 0 0 1-1V8a1 1 0 0 0-1-1zm-5-2a1 1 0 1 1 0 2h-2a2 2 0 0 1 2-2zM9 5a2 2 0 0 1 2 2H9a1 1 0 0 1 0-2zm2 15H7v-8h4zm6 0h-4v-8h4z"/></svg>
-          <h3>Espera el sorteo</h3>
-          <p>Sacamos al ganador en vivo por Facebook. Sorteo: {{RIFA_FECHA}}.</p>
+        <li class="vidrio">
+          <span class="num-paso" aria-hidden="true">3</span>
+          <h3>Canjea tus premios</h3>
+          <p>Elige tu premio aquí, te damos un código y lo recoges en la tienda. Así de directo.</p>
         </li>
       </ol>
     </section>
 
-    <section class="vidrio tarjeta facebook-cta" aria-labelledby="t-fb">
-      <h2 id="t-fb" class="subtitulo">Síguenos en Facebook</h2>
-      <p>Ahí transmitimos el sorteo en vivo y publicamos a los ganadores.</p>
-      <a class="btn btn-facebook" href="{{FACEBOOK_URL}}" target="_blank" rel="noopener">Ir a la página de SuperMass</a>
+    <!-- PREMIOS -->
+    <section class="seccion" id="premios" aria-labelledby="t-premios">
+      <div class="seccion-cabeza">
+        <p class="eyebrow">Premios</p>
+        <h2 class="h2" id="t-premios">Tus puntos valen producto de verdad</h2>
+        <p class="lead">Nada de cupones que nadie usa. Cambia tus puntos por lo que ya compras.</p>
+      </div>
+      <div class="premios" id="lista-premios"></div>
+
+      <div class="calc vidrio" aria-labelledby="t-calc">
+        <div>
+          <label for="gasto" id="t-calc">¿Cuánto gastas en la tienda a la semana?</label>
+          <output id="gasto-out" for="gasto">$400</output>
+          <input type="range" id="gasto" min="100" max="3000" step="50" value="400">
+        </div>
+        <p class="calc-res" id="calc-res" aria-live="polite"></p>
+      </div>
+    </section>
+
+    <!-- NIVELES -->
+    <section class="seccion" id="niveles" aria-labelledby="t-niveles">
+      <div class="seccion-cabeza">
+        <p class="eyebrow">Entre más vienes, más ganas</p>
+        <h2 class="h2" id="t-niveles">Sube de nivel y multiplica tus puntos</h2>
+      </div>
+      <div class="niveles" id="lista-niveles"></div>
+    </section>
+
+    <!-- BONOS -->
+    <section class="seccion" aria-labelledby="t-bonos">
+      <div class="seccion-cabeza">
+        <p class="eyebrow">Puntos extra</p>
+        <h2 class="h2" id="t-bonos">Más formas de sumar</h2>
+      </div>
+      <div class="bonos">
+        <div class="vidrio bono"><span class="bono-num">+{{CLUB_BIENVENIDA}}</span><div><h3>Al unirte</h3><p>Puntos de regalo desde el primer día.</p></div></div>
+        <div class="vidrio bono"><span class="bono-num">x2</span><div><h3>En tu cumpleaños</h3><p>Puntos dobles todo tu mes de cumpleaños.</p></div></div>
+        <div class="vidrio bono"><span class="bono-num">+{{CLUB_REFERIDO}}</span><div><h3>Invita a un vecino</h3><p>Para ti y para él cuando haga su primera compra.</p></div></div>
+      </div>
+    </section>
+
+    <!-- FACEBOOK: se llena solo con las publicaciones de la página -->
+    <section class="seccion" id="novedades" aria-labelledby="t-novedades" hidden>
+      <div class="seccion-cabeza">
+        <p class="eyebrow">Promociones y novedades</p>
+        <h2 class="h2" id="t-novedades">Lo nuevo en SuperMass</h2>
+        <p class="lead">Lo más reciente de nuestro Facebook. Síguenos para enterarte primero.</p>
+      </div>
+      <div class="fb-grid" id="fb-grid"></div>
+      <p class="mt"><a class="btn btn-facebook" href="{{FACEBOOK_URL}}" target="_blank" rel="noopener">Seguir a SuperMass en Facebook</a></p>
+    </section>
+
+    <!-- PEDIDOS -->
+    <section class="seccion" id="pedidos" aria-labelledby="t-pedidos">
+      <div class="vidrio cta-bloque">
+        <div>
+          <p class="eyebrow">Pedidos a domicilio</p>
+          <h2 class="h2" id="t-pedidos">¿No puedes venir? Te lo llevamos.</h2>
+          <p class="lead">Arma tu pedido aquí o mándanos la lista por WhatsApp. También suma puntos.</p>
+        </div>
+        <div>
+          <ul class="datos-lista">
+            <li><svg aria-hidden="true" viewBox="0 0 24 24" width="24" height="24"><path fill="currentColor" d="M12 2a10 10 0 1 1 0 20 10 10 0 0 1 0-20zm1 5h-2v6l5 3 1-1.7-4-2.3z"/></svg><span>{{TIENDA_HORARIO}}</span></li>
+            <li><svg aria-hidden="true" viewBox="0 0 24 24" width="24" height="24"><path fill="currentColor" d="M12 2a7 7 0 0 1 7 7c0 5-7 13-7 13S5 14 5 9a7 7 0 0 1 7-7zm0 4.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5z"/></svg><span>{{TIENDA_ZONA_ENVIO}}</span></li>
+            <li><svg aria-hidden="true" viewBox="0 0 24 24" width="24" height="24"><path fill="currentColor" d="M3 6h11v9h2.2l1.8-4h3l1 4v3h-2a2.5 2.5 0 0 1-5 0H9a2.5 2.5 0 0 1-5 0H3zm3.5 11a1 1 0 1 0 0 2 1 1 0 0 0 0-2zm10 0a1 1 0 1 0 0 2 1 1 0 0 0 0-2z"/></svg><span id="dato-envio">Envío a domicilio</span></li>
+          </ul>
+          <div class="ctas mt">
+            <a class="btn btn-amarillo" href="/pedido">Armar mi pedido</a>
+            <a class="btn btn-whatsapp" href="{{WHATSAPP_URL}}" target="_blank" rel="noopener" data-solo-whatsapp>Mandar mi lista por WhatsApp</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- BUZÓN -->
+    <section class="seccion" aria-labelledby="t-buzon">
+      <div class="vidrio cta-bloque">
+        <div>
+          <p class="eyebrow">Buzón de quejas y sugerencias</p>
+          <h2 class="h2" id="t-buzon">¿Algo no te gustó? Queremos saberlo.</h2>
+          <p class="lead">Lo lee el dueño, no un robot. Si eres socio, te regalamos puntos por tu opinión.</p>
+        </div>
+        <div class="ctas">
+          <a class="btn btn-amarillo" href="/buzon">Dejar mi opinión</a>
+          <a class="btn btn-vidrio" href="/buzon#producto">Pedir un producto que no tenemos</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- FAQ -->
+    <section class="seccion" id="preguntas" aria-labelledby="t-faq">
+      <div class="seccion-cabeza centro">
+        <p class="eyebrow">Dudas</p>
+        <h2 class="h2" id="t-faq">Preguntas frecuentes</h2>
+      </div>
+      <div class="faq medio">
+        <details class="vidrio"><summary>¿Cuánto cuesta la tarjeta?</summary><p>Nada. Es gratis y no tiene plazos ni letras chiquitas. Solo necesitas tu celular.</p></details>
+        <details class="vidrio"><summary>¿Cómo sumo puntos?</summary><p>Al pagar, di tu número de celular en caja. Te sumamos 1 punto por cada ${{CLUB_PESOS_PUNTO}} y los ves al instante en tu tarjeta.</p></details>
+        <details class="vidrio"><summary>¿Cómo cambio mis puntos?</summary><p>Entra a tu tarjeta, elige tu premio y presiona «Canjear». Te damos un código de 6 letras: muéstralo en caja y te entregamos tu premio.</p></details>
+        <details class="vidrio"><summary>Me registraron en caja, ¿cómo entro?</summary><p>Entra a «Mi tarjeta», escribe tu celular y crea tu NIP de 4 números. Tus puntos ya estarán ahí.</p></details>
+        <details class="vidrio"><summary>Olvidé mi NIP</summary><p>Pide en caja que lo reinicien y crea uno nuevo desde «Mi tarjeta». Tus puntos no se pierden.</p></details>
+        <details class="vidrio"><summary>¿Los pedidos a domicilio suman puntos?</summary><p>Sí. Cuando te entregamos el pedido, los puntos se suman solos a la tarjeta de tu celular.</p></details>
+      </div>
     </section>
   </main>
 
-  <footer class="contenedor">
+  <footer class="ancho pie-club">
     <div class="vidrio pie">
-      <img src="/logo" alt="SuperMass Abarrotes" width="180" height="64" class="pie-logo">
-      <address>
-        <strong>SuperMass Abarrotes</strong><br>
-        {{TIENDA_DIRECCION}}
-      </address>
+      <img src="/logo" alt="SuperMass Abarrotes" width="180" height="130" class="pie-logo">
+      <address><strong>SuperMass Abarrotes · Cerca de ti</strong><br>{{TIENDA_DIRECCION}}<br>{{TIENDA_HORARIO}}</address>
       <nav aria-label="Enlaces" class="pie-enlaces">
-        <a href="{{FACEBOOK_URL}}" target="_blank" rel="noopener">Facebook de SuperMass</a>
+        <a href="/club">Mi tarjeta</a>
+        <a href="/pedido">Pedidos</a>
+        <a href="/buzon">Buzón</a>
+        <a href="{{FACEBOOK_URL}}" target="_blank" rel="noopener">Facebook</a>
         <a href="/aviso-privacidad">Aviso de privacidad</a>
       </nav>
-      <p class="pie-legal">© {{ANIO}} SuperMass Abarrotes · Cerca de ti. Promoción válida solo con ticket original de compra.</p>
     </div>
   </footer>
 
+  <a class="wa-flotante" href="{{WHATSAPP_URL}}" target="_blank" rel="noopener" aria-label="Escríbenos por WhatsApp" data-solo-whatsapp>
+    <svg aria-hidden="true" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm0 18.2a8.2 8.2 0 0 1-4.2-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8s-.4-.1-.6.1l-.8 1c-.1.2-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.3-.4.3-.4.7-1.3.1-.2 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 3 3 0 0 0-.9 2.2 5.1 5.1 0 0 0 1.1 2.7 11.6 11.6 0 0 0 4.5 4c1.7.7 2.3.8 3.2.6a2.7 2.7 0 0 0 1.7-1.2 2.2 2.2 0 0 0 .2-1.2c-.1-.1-.3-.2-.5-.3z"/></svg>
+  </a>
+
+  <nav class="tabbar vidrio" aria-label="Accesos rápidos">
+    <a href="/" aria-current="page"><svg aria-hidden="true" viewBox="0 0 24 24"><path fill="currentColor" d="M12 3 2 11h3v9h5v-6h4v6h5v-9h3z"/></svg>Inicio</a>
+    <a href="/club"><svg aria-hidden="true" viewBox="0 0 24 24"><path fill="currentColor" d="M3 5h18a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1zm1 4v2h16V9zm0 5v2h6v-2z"/></svg>Mi tarjeta</a>
+    <a href="/pedido"><svg aria-hidden="true" viewBox="0 0 24 24"><path fill="currentColor" d="M7 18a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm10 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4zM5.2 4H2V2h4.5l.9 2H22l-3.6 8.5a2 2 0 0 1-1.8 1.2H8.1l-.9 1.8V16H19v2H7a2 2 0 0 1-1.8-2.9l1.4-2.6z"/></svg>Pedir</a>
+    <a href="/buzon"><svg aria-hidden="true" viewBox="0 0 24 24"><path fill="currentColor" d="M4 3h16a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H8l-5 4V5a2 2 0 0 1 1-2zm3 5v2h10V8zm0 4v2h7v-2z"/></svg>Buzón</a>
+  </nav>
+
   <script type="application/json" id="config">{{CONFIG_JSON}}</script>
-  <script src="/js/app.js" defer></script>
+  <script src="/js/comun.js" defer></script>
+  <script src="/js/inicio.js" defer></script>
 </body>
 </html>

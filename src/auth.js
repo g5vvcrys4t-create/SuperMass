@@ -66,4 +66,4 @@ function requiereAdmin(req, res, next) {
   res.status(401).json({ error: 'Inicia sesión para continuar.' });
 }
 
-module.exports = { credencialesValidas, iniciarSesion, cerrarSesion, requiereAdmin };
+module.exports = { credencialesValidas, iniciarSesion, cerrarSesion, requiereAdmin, leerCookie, igualSeguro };

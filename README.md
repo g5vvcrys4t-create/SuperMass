@@ -1,8 +1,20 @@
-# SuperMass · Rifa de clientes
+# SuperMass · Club de clientes, pedidos y rifa
+
+## Club SuperMass (nuevo)
+
+- **Inicio** (`/`): página de venta del club con calculadora de premios, niveles, pedidos y buzón.
+- **Mi tarjeta** (`/club`): el cliente crea su tarjeta con celular + NIP, ve sus puntos, canjea premios (recibe un código de 6 letras) e invita vecinos.
+- **Pedidos** (`/pedido`): catálogo con carrito; el pedido se guarda en el panel y se manda por WhatsApp a la tienda.
+- **Buzón** (`/buzon`): quejas, sugerencias, felicitaciones y productos que piden los clientes.
+- **Panel** (`/admin`): *Caja* (sumar puntos por celular, dar de alta clientes, entregar premios por código), *Pedidos* (con aviso de pedidos nuevos), *Socios*, *Productos* y *Buzón*.
+
+Reglas de puntos, niveles y premios: `src/programa.js` (1 punto por cada $10, 20 de bienvenida, 30 por invitar, x2 en el mes de cumpleaños).
+
+## Rifa
 
 Página de registro de tickets para la rifa de **SuperMass Abarrotes · Cerca de ti**, con panel de administrador y tómbola animada. Estilo *Liquid Glass*, pensada primero para celular.
 
-- **Público** (`/`): registro con folio, nombre, teléfono, foto del ticket y aviso de privacidad. Confirmación en verde con botones para compartir en Facebook y WhatsApp.
+- **Público** (`/rifa`): registro con folio, nombre, teléfono, foto del ticket y aviso de privacidad. Confirmación en verde con botones para compartir en Facebook y WhatsApp.
 - **Administrador** (`/admin`): búsqueda, revisión de fotos (Validar / Rechazar con avance automático al siguiente pendiente), exportar CSV para Excel, tómbola y historial de ganadores.
 - **Facebook**: etiquetas Open Graph y una imagen de 1200×630 que se genera sola en `/og.png` con el logo, el premio y la fecha.
 
@@ -42,6 +54,8 @@ El logo incluido (`public/img/logo.svg`) es provisional. Para usar el oficial, c
 | `LIMITE_POR_TELEFONO` | Tickets máximos por teléfono en total (10). |
 | `LIMITE_TELEFONO_MINUTO` | Tickets máximos por teléfono por minuto (2). |
 | `LIMITE_FOTO_MB` | Peso máximo de la foto (10 MB). |
+| `TIENDA_WHATSAPP` | WhatsApp de la tienda a 10 dígitos; ahí llegan los pedidos. |
+| `TIENDA_HORARIO`, `TIENDA_ZONA_ENVIO` | Se muestran en inicio y pedidos. |
 | `OG_IMAGE_URL` | Opcional: tu propia imagen para Facebook en lugar de la generada. |
 | `ZONA_HORARIA` | Zona para las fechas del CSV (`America/Mexico_City`). |
 

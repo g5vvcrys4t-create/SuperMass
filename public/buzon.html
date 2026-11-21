@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="es-MX">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Buzón de quejas y sugerencias · SuperMass</title>
+  <meta name="description" content="Cuéntanos cómo te atendimos. Quejas, sugerencias y productos que quieres encontrar en SuperMass.">
+  <meta name="theme-color" content="#C00812">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="{{PAGE_URL}}">
+  <meta property="og:title" content="Buzón SuperMass · Tu opinión cuenta">
+  <meta property="og:image" content="{{OG_IMAGE}}">
+  <link rel="icon" href="/img/favicon-48.png" type="image/png">
+  <link rel="apple-touch-icon" href="/img/apple-touch-icon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@700;800&family=Nunito:wght@500;600;700;800&display=swap">
+  <link rel="stylesheet" href="/css/styles.css">
+  <link rel="stylesheet" href="/css/club.css">
+</head>
+<body class="con-tabbar">
+  <div class="fondo" aria-hidden="true">
+    <span class="mancha m1"></span><span class="mancha m2"></span><span class="mancha m3"></span><span class="mancha m4"></span>
+  </div>
+  <a class="saltar" href="#contenido">Ir al contenido</a>
+
+  <header class="nav vidrio">
+    <a href="/" class="nav-logo" aria-label="SuperMass, inicio"><img src="/logo" alt="SuperMass Abarrotes" width="589" height="426"></a>
+    <nav class="nav-enlaces" aria-label="Principal">
+      <a href="/#premios">Premios</a>
+      <a href="/pedido">Pedir a domicilio</a>
+      <a href="/buzon" aria-current="page">Buzón</a>
+    </nav>
+    <a href="/club" class="nav-tarjeta" id="nav-tarjeta">Mi tarjeta</a>
+  </header>
+
+  <main id="contenido" class="medio">
+    <header class="pedido-cabeza">
+      <p class="eyebrow">Buzón SuperMass</p>
+      <h1>Tu opinión nos hace mejores</h1>
+      <p class="lead">Quejas, ideas o ese producto que no encuentras. Lo lee directamente el dueño.</p>
+    </header>
+
+    <section class="vidrio tarjeta mt" id="bloque-form" aria-label="Formulario del buzón">
+      <p class="nota-ok" id="aviso-puntos" hidden></p>
+      <form id="form" novalidate>
+        <div class="trampa" aria-hidden="true"><label>No llenes <input type="text" name="sitio" tabindex="-1" autocomplete="off"></label></div>
+
+        <fieldset class="campo">
+          <legend>¿Qué nos quieres decir?</legend>
+          <div class="chips">
+            <label class="chip"><input type="radio" name="tipo" value="queja"><span>😠 Queja</span></label>
+            <label class="chip"><input type="radio" name="tipo" value="sugerencia" checked><span>💡 Sugerencia</span></label>
+            <label class="chip"><input type="radio" name="tipo" value="felicitacion"><span>👏 Felicitación</span></label>
+            <label class="chip"><input type="radio" name="tipo" value="producto" id="tipo-producto"><span>🛒 Quiero un producto</span></label>
+          </div>
+        </fieldset>
+
+        <fieldset class="campo">
+          <legend>¿Cómo te atendimos? <span class="opcional">(opcional)</span></legend>
+          <div class="estrellas">
+            <input type="radio" name="cal" id="c5" value="5"><label for="c5" title="Excelente">★<span class="sr">5 estrellas, excelente</span></label>
+            <input type="radio" name="cal" id="c4" value="4"><label for="c4" title="Bien">★<span class="sr">4 estrellas, bien</span></label>
+            <input type="radio" name="cal" id="c3" value="3"><label for="c3" title="Regular">★<span class="sr">3 estrellas, regular</span></label>
+            <input type="radio" name="cal" id="c2" value="2"><label for="c2" title="Mal">★<span class="sr">2 estrellas, mal</span></label>
+            <input type="radio" name="cal" id="c1" value="1"><label for="c1" title="Muy mal">★<span class="sr">1 estrella, muy mal</span></label>
+          </div>
+        </fieldset>
+
+        <div class="campo">
+          <label for="mensaje" id="mensaje-label">Cuéntanos</label>
+          <textarea id="mensaje" maxlength="1000" required aria-describedby="mensaje-error" placeholder="Escribe con confianza…"></textarea>
+          <p id="mensaje-error" class="error" aria-live="polite"></p>
+        </div>
+
+        <div id="datos-contacto">
+          <p class="ayuda-general">¿Quieres que te respondamos? Déjanos tus datos <span class="opcional">(opcional)</span>.</p>
+          <div class="campo">
+            <label for="nombre">Nombre</label>
+            <input id="nombre" type="text" maxlength="120" autocomplete="name">
+          </div>
+          <div class="campo">
+            <label for="telefono">Celular</label>
+            <input id="telefono" type="tel" inputmode="numeric" maxlength="10" autocomplete="tel-national" aria-describedby="telefono-error">
+            <p id="telefono-error" class="error" aria-live="polite"></p>
+          </div>
+        </div>
+
+        <p id="error-general" class="error error-general" role="alert"></p>
+        <button class="btn btn-amarillo" type="submit" id="enviar"><span class="btn-texto">Enviar</span><span class="girador" aria-hidden="true"></span></button>
+      </form>
+    </section>
+
+    <section class="vidrio tarjeta mt exito" id="exito" hidden tabindex="-1" aria-labelledby="t-exito">
+      <div class="exito-icono" aria-hidden="true"><svg viewBox="0 0 24 24" width="44" height="44"><path fill="currentColor" d="M9.5 16.2 5.3 12l-1.4 1.4 5.6 5.6 11-11-1.4-1.4z"/></svg></div>
+      <h1 class="subtitulo" id="t-exito">¡Gracias por decírnoslo!</h1>
+      <p class="exito-nota" id="exito-texto">Lo revisamos y, si nos dejaste tu celular, te contactamos.</p>
+      <div class="compartir">
+        <a class="btn btn-amarillo" href="/club" id="exito-club">Ver mi tarjeta</a>
+        <a class="btn btn-vidrio" href="/">Volver al inicio</a>
+      </div>
+    </section>
+  </main>
+
+  <nav class="tabbar vidrio" aria-label="Accesos rápidos">
+    <a href="/"><svg aria-hidden="true" viewBox="0 0 24 24"><path fill="currentColor" d="M12 3 2 11h3v9h5v-6h4v6h5v-9h3z"/></svg>Inicio</a>
+    <a href="/club"><svg aria-hidden="true" viewBox="0 0 24 24"><path fill="currentColor" d="M3 5h18a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1zm1 4v2h16V9zm0 5v2h6v-2z"/></svg>Mi tarjeta</a>
+    <a href="/pedido"><svg aria-hidden="true" viewBox="0 0 24 24"><path fill="currentColor" d="M7 18a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm10 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4zM5.2 4H2V2h4.5l.9 2H22l-3.6 8.5a2 2 0 0 1-1.8 1.2H8.1l-.9 1.8V16H19v2H7a2 2 0 0 1-1.8-2.9l1.4-2.6z"/></svg>Pedir</a>
+    <a href="/buzon" aria-current="page"><svg aria-hidden="true" viewBox="0 0 24 24"><path fill="currentColor" d="M4 3h16a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H8l-5 4V5a2 2 0 0 1 1-2zm3 5v2h10V8zm0 4v2h7v-2z"/></svg>Buzón</a>
+  </nav>
+
+  <script type="application/json" id="config">{{CONFIG_JSON}}</script>
+  <script src="/js/comun.js" defer></script>
+  <script src="/js/buzon.js" defer></script>
+</body>
+</html>

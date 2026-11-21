@@ -30,9 +30,21 @@ services:
       - key: RIFA_FECHA
         value: Sábado 19 de diciembre de 2026
       - key: TIENDA_DIRECCION
-        sync: false
+        value: Calle Agave 328, Los Magueyes, C.P. 78100, San Luis Potosí, S.L.P.
+      - key: TIENDA_TELEFONO
+        value: "4447079619"
       - key: FACEBOOK_URL
+        value: https://www.facebook.com/1291426010723582
+      - key: FACEBOOK_PAGE_ID
+        value: "1291426010723582"
+      - key: FACEBOOK_PAGE_TOKEN
         sync: false
+      - key: TIENDA_WHATSAPP
+        sync: false
+      - key: TIENDA_HORARIO
+        value: Todos los días de 7:00 a 23:00
+      - key: TIENDA_ZONA_ENVIO
+        value: Los Magueyes y colonias cercanas
 
 databases:
   - name: supermass-db

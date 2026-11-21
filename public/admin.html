@@ -4,14 +4,16 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="robots" content="noindex, nofollow">
-  <title>Administrador · Rifa SuperMass</title>
-  <meta name="theme-color" content="#D7141A">
-  <link rel="icon" href="/img/favicon.svg" type="image/svg+xml">
+  <title>Panel · SuperMass</title>
+  <meta name="theme-color" content="#C00812">
+  <link rel="icon" href="/img/favicon-48.png" type="image/png">
+  <link rel="apple-touch-icon" href="/img/apple-touch-icon.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@700;800&family=Nunito:wght@500;600;700;800&display=swap">
   <link rel="stylesheet" href="/css/styles.css">
   <link rel="stylesheet" href="/css/admin.css">
+  <link rel="stylesheet" href="/css/club.css">
 </head>
 <body class="admin">
   <div class="fondo" aria-hidden="true">
@@ -21,8 +23,8 @@
   <!-- Inicio de sesión -->
   <main id="vista-login" class="contenedor login" hidden>
     <div class="vidrio tarjeta">
-      <img src="/logo" alt="SuperMass Abarrotes" width="220" height="80" class="login-logo">
-      <h1 class="subtitulo">Panel de la rifa</h1>
+      <img src="/logo" alt="SuperMass Abarrotes" width="220" height="159" class="login-logo">
+      <h1 class="subtitulo">Panel SuperMass</h1>
       <form id="form-login" novalidate>
         <div class="campo">
           <label for="usuario">Usuario</label>
@@ -41,9 +43,15 @@
   <!-- Panel -->
   <div id="vista-panel" hidden>
     <header class="barra vidrio">
-      <img src="/logo" alt="SuperMass" width="120" height="44" class="barra-logo">
+      <img src="/logo" alt="SuperMass" width="120" height="87" class="barra-logo">
       <nav class="pestanas" role="tablist" aria-label="Secciones del panel">
-        <button role="tab" id="tab-registros" aria-controls="sec-registros" aria-selected="true" class="pestana">Registros</button>
+        <button role="tab" id="tab-caja" aria-controls="sec-caja" aria-selected="true" class="pestana">Caja</button>
+        <button role="tab" id="tab-pedidos" aria-controls="sec-pedidos" aria-selected="false" class="pestana" tabindex="-1">Pedidos <span class="insignia" id="badge-pedidos" hidden></span></button>
+        <button role="tab" id="tab-socios" aria-controls="sec-socios" aria-selected="false" class="pestana" tabindex="-1">Socios</button>
+        <button role="tab" id="tab-productos" aria-controls="sec-productos" aria-selected="false" class="pestana" tabindex="-1">Productos</button>
+        <button role="tab" id="tab-buzon" aria-controls="sec-buzon" aria-selected="false" class="pestana" tabindex="-1">Buzón <span class="insignia" id="badge-buzon" hidden></span></button>
+        <button role="tab" id="tab-facebook" aria-controls="sec-facebook" aria-selected="false" class="pestana" tabindex="-1">Facebook</button>
+        <button role="tab" id="tab-registros" aria-controls="sec-registros" aria-selected="false" class="pestana" tabindex="-1">Rifa</button>
         <button role="tab" id="tab-tombola" aria-controls="sec-tombola" aria-selected="false" class="pestana" tabindex="-1">Tómbola</button>
         <button role="tab" id="tab-ganadores" aria-controls="sec-ganadores" aria-selected="false" class="pestana" tabindex="-1">Ganadores</button>
       </nav>
@@ -52,8 +60,204 @@
 
     <p id="aviso-memoria" class="contenedor-ancho aviso" hidden>⚠️ Modo de prueba: sin DATABASE_URL los datos se guardan en memoria y se borran al reiniciar.</p>
 
+    <!-- Caja -->
+    <section id="sec-caja" role="tabpanel" aria-labelledby="tab-caja" class="contenedor-ancho">
+      <div class="stats">
+        <div class="vidrio stat"><span class="stat-num" data-club="socios">0</span><span>Socios</span></div>
+        <div class="vidrio stat stat-ok"><span class="stat-num" data-club="nuevos7">0</span><span>Nuevos esta semana</span></div>
+        <div class="vidrio stat"><span class="stat-num" data-club="compras7">0</span><span>Compras con tarjeta (7 días)</span></div>
+        <div class="vidrio stat"><span class="stat-num" data-club="ventas7">$0</span><span>Vendido a socios (7 días)</span></div>
+      </div>
+
+      <div class="caja-grid">
+        <div class="vidrio tarjeta">
+          <h2 class="subtitulo">Sumar puntos</h2>
+          <form id="f-buscar" class="fila-form" novalidate>
+            <div class="campo">
+              <label for="c-tel">Celular del cliente</label>
+              <input id="c-tel" type="tel" inputmode="numeric" maxlength="10" autocomplete="off" placeholder="10 dígitos">
+            </div>
+            <button class="btn btn-amarillo-chico" type="submit">Buscar</button>
+          </form>
+          <p id="caja-error" class="error error-general" role="alert"></p>
+
+          <div id="caja-socio" hidden>
+            <div class="caja-ficha">
+              <div><strong id="cs-nombre"></strong><span id="cs-detalle"></span></div>
+              <div class="caja-pts"><strong id="cs-puntos">0</strong><span>pts</span></div>
+            </div>
+            <p class="nota-info" id="cs-cumple" hidden>🎂 Mes de cumpleaños: puntos dobles.</p>
+            <form id="f-compra" novalidate>
+              <div class="fila2">
+                <div class="campo">
+                  <label for="c-monto">Total del ticket ($)</label>
+                  <input id="c-monto" type="text" inputmode="decimal" autocomplete="off" placeholder="Ej. 245.50">
+                </div>
+                <div class="campo">
+                  <label for="c-folio">Folio <span class="opcional">(opcional)</span></label>
+                  <input id="c-folio" type="text" inputmode="numeric" maxlength="30" autocomplete="off">
+                </div>
+              </div>
+              <p class="ayuda" id="c-preview"></p>
+              <button class="btn btn-amarillo" type="submit" id="c-sumar">Sumar puntos</button>
+            </form>
+            <div id="cs-canjes"></div>
+          </div>
+
+          <form id="caja-alta" hidden novalidate>
+            <p class="nota-info">Ese celular no tiene tarjeta. Regístralo en 5 segundos: le damos sus puntos de bienvenida y él crea su NIP después en la página.</p>
+            <div class="campo">
+              <label for="c-nombre">Nombre del cliente</label>
+              <input id="c-nombre" type="text" maxlength="120" autocomplete="off">
+            </div>
+            <button class="btn btn-amarillo" type="submit">Crear tarjeta</button>
+          </form>
+          <p class="nota-ok" id="caja-ok" role="status" hidden></p>
+        </div>
+
+        <div class="vidrio tarjeta">
+          <h2 class="subtitulo">Entregar premio</h2>
+          <p class="ayuda-general">El cliente te muestra un código de 6 letras en su celular.</p>
+          <form id="f-codigo" class="fila-form" novalidate>
+            <div class="campo">
+              <label for="c-codigo">Código</label>
+              <input id="c-codigo" type="text" maxlength="8" autocomplete="off" autocapitalize="characters" class="pin" placeholder="ABC123">
+            </div>
+            <button class="btn btn-amarillo-chico" type="submit">Entregar</button>
+          </form>
+          <p id="codigo-msg" role="status"></p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Pedidos -->
+    <section id="sec-pedidos" role="tabpanel" aria-labelledby="tab-pedidos" class="contenedor-ancho" hidden>
+      <div class="vidrio tarjeta">
+        <div class="cabeza-lista">
+          <h2 class="subtitulo">Pedidos</h2>
+          <label class="sr" for="p-filtro">Mostrar</label>
+          <select id="p-filtro">
+            <option value="">Activos</option>
+            <option value="nuevo">Nuevos</option>
+            <option value="preparando">Preparando</option>
+            <option value="en camino">En camino</option>
+            <option value="entregado">Entregados</option>
+            <option value="cancelado">Cancelados</option>
+          </select>
+        </div>
+        <p class="ayuda-general">Al marcar <strong>Entregado</strong> se suman los puntos solos si el celular tiene tarjeta. La lista se actualiza cada 30 segundos.</p>
+        <div id="lista-pedidos" class="lista-tarjetas"></div>
+      </div>
+    </section>
+
+    <!-- Socios -->
+    <section id="sec-socios" role="tabpanel" aria-labelledby="tab-socios" class="contenedor-ancho" hidden>
+      <div class="vidrio tarjeta">
+        <h2 class="subtitulo">Socios del Club</h2>
+        <form id="f-socios" class="fila-form" role="search">
+          <div class="campo">
+            <label for="s-buscar">Buscar</label>
+            <input id="s-buscar" type="search" placeholder="Nombre o celular" autocomplete="off">
+          </div>
+        </form>
+        <div class="tabla-envoltura">
+          <table class="tabla">
+            <thead><tr><th scope="col">Nombre</th><th scope="col">Celular</th><th scope="col">Nivel</th><th scope="col">Puntos</th><th scope="col">Compras</th><th scope="col">Última compra</th><th scope="col"><span class="sr">Acciones</span></th></tr></thead>
+            <tbody id="tbody-socios"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- Productos -->
+    <section id="sec-productos" role="tabpanel" aria-labelledby="tab-productos" class="contenedor-ancho" hidden>
+      <div class="vidrio tarjeta">
+        <h2 class="subtitulo">Productos para pedidos</h2>
+        <p class="ayuda-general">Marca ★ los que más se venden: salen primero en la página de pedidos.</p>
+        <form id="f-producto" class="form-producto" novalidate>
+          <div class="campo"><label for="np-nombre">Nombre</label><input id="np-nombre" type="text" maxlength="120" placeholder="Ej. Leche Lala 1 L"></div>
+          <div class="campo"><label for="np-precio">Precio ($)</label><input id="np-precio" type="text" inputmode="decimal" placeholder="30.00"></div>
+          <div class="campo"><label for="np-cat">Categoría</label><input id="np-cat" type="text" list="cats-lista" maxlength="40" placeholder="Bebidas"></div>
+          <button class="btn btn-amarillo-chico" type="submit">Agregar</button>
+        </form>
+        <datalist id="cats-lista"></datalist>
+        <p id="prod-msg" class="error error-general" role="alert"></p>
+        <div class="tabla-envoltura">
+          <table class="tabla tabla-productos">
+            <thead><tr><th scope="col">Nombre</th><th scope="col">Precio</th><th scope="col">Categoría</th><th scope="col">Activo</th><th scope="col">★</th><th scope="col"><span class="sr">Guardar</span></th></tr></thead>
+            <tbody id="tbody-productos"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- Buzón -->
+    <section id="sec-buzon" role="tabpanel" aria-labelledby="tab-buzon" class="contenedor-ancho" hidden>
+      <div class="vidrio tarjeta">
+        <div class="cabeza-lista">
+          <h2 class="subtitulo">Buzón de quejas y sugerencias</h2>
+          <label class="check-chico"><input type="checkbox" id="b-todas"> Ver también atendidas</label>
+        </div>
+        <p class="resumen" id="b-promedio"></p>
+        <div id="lista-opiniones" class="lista-tarjetas"></div>
+      </div>
+    </section>
+
+    <!-- Facebook -->
+    <section id="sec-facebook" role="tabpanel" aria-labelledby="tab-facebook" class="contenedor-ancho" hidden>
+      <div class="fb-panel">
+        <div class="vidrio tarjeta">
+          <h2 class="subtitulo">Publicar en Facebook</h2>
+          <p class="aviso" id="fb-desconectado" hidden>Facebook no está conectado. Pon <strong>FACEBOOK_PAGE_ID</strong> y <strong>FACEBOOK_PAGE_TOKEN</strong> en las variables del servidor.</p>
+          <p class="ayuda-general">Se publica en la página de SuperMass y aparece solo en la web en unos minutos.</p>
+
+          <div class="plantillas" role="group" aria-label="Plantillas">
+            <button class="btn btn-vidrio btn-chico-vidrio" type="button" data-plantilla="promo">🔥 Promoción</button>
+            <button class="btn btn-vidrio btn-chico-vidrio" type="button" data-plantilla="club">⭐ Invitar al Club</button>
+            <button class="btn btn-vidrio btn-chico-vidrio" type="button" data-plantilla="pedidos">🛵 Pedidos a domicilio</button>
+            <button class="btn btn-vidrio btn-chico-vidrio" type="button" data-plantilla="ganador">🏆 Ganador de la rifa</button>
+          </div>
+
+          <form id="f-fb" novalidate>
+            <div class="campo">
+              <label for="fb-mensaje">Texto</label>
+              <textarea id="fb-mensaje" maxlength="2000" rows="7" placeholder="Escribe tu promoción…"></textarea>
+              <p class="ayuda" id="fb-cuenta">0 / 2000</p>
+            </div>
+            <div class="campo">
+              <label for="fb-enlace">Enlace a la web <span class="opcional">(lleva clientes a tu página)</span></label>
+              <select id="fb-enlace">
+                <option value="">Sin enlace</option>
+                <option value="/club">Crear tarjeta del Club</option>
+                <option value="/pedido">Hacer pedido</option>
+                <option value="/rifa">Registrar ticket de la rifa</option>
+                <option value="/">Página de inicio</option>
+              </select>
+            </div>
+            <fieldset class="campo">
+              <legend>Foto <span class="opcional">(recomendada: las publicaciones con foto llegan a más gente)</span></legend>
+              <label class="btn btn-vidrio" for="fb-foto">📷 Elegir foto</label>
+              <input class="sr-input" id="fb-foto" type="file" accept="image/*">
+              <div class="foto-preview" id="fb-preview" hidden>
+                <img id="fb-img" alt="Vista previa de la foto">
+                <button type="button" class="btn btn-chico" id="fb-quitar">Quitar foto</button>
+              </div>
+            </fieldset>
+            <p id="fb-error" class="error error-general" role="alert"></p>
+            <p class="nota-ok" id="fb-ok" role="status" hidden></p>
+            <button class="btn btn-facebook btn-ancho" type="submit" id="fb-publicar">Publicar en Facebook</button>
+          </form>
+        </div>
+
+        <div class="vidrio tarjeta">
+          <h2 class="subtitulo">Publicado recientemente</h2>
+          <div class="fb-grid fb-grid-chica" id="fb-recientes"></div>
+        </div>
+      </div>
+    </section>
+
     <!-- Registros -->
-    <section id="sec-registros" role="tabpanel" aria-labelledby="tab-registros" class="contenedor-ancho">
+    <section id="sec-registros" role="tabpanel" aria-labelledby="tab-registros" class="contenedor-ancho" hidden>
       <div class="stats" id="stats">
         <div class="vidrio stat"><span class="stat-num" data-stat="total">0</span><span>Registros</span></div>
         <div class="vidrio stat"><span class="stat-num" data-stat="pendientes">0</span><span>Pendientes</span></div>
@@ -100,7 +304,7 @@
     <section id="sec-tombola" role="tabpanel" aria-labelledby="tab-tombola" class="contenedor-ancho" hidden>
       <div class="vidrio tarjeta tombola" id="tombola">
         <div class="tombola-encabezado">
-          <img src="/logo" alt="SuperMass" width="200" height="72" class="tombola-logo">
+          <img src="/logo" alt="SuperMass" width="200" height="145" class="tombola-logo">
           <button class="btn btn-vidrio btn-chico-vidrio" id="pantalla-completa">Pantalla completa</button>
         </div>
         <h2 class="tombola-premio" id="tombola-premio">¡Gran sorteo!</h2>
@@ -165,6 +369,7 @@
   </dialog>
 
   <div class="confeti" id="confeti" aria-hidden="true"></div>
+  <script src="/js/admin-club.js" defer></script>
   <script src="/js/admin.js" defer></script>
 </body>
 </html>

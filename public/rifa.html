@@ -1,0 +1,203 @@
+<!doctype html>
+<html lang="es-MX">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>{{RIFA_NOMBRE}} · SuperMass Abarrotes</title>
+  <meta name="description" content="¡Gánate {{RIFA_PREMIO}}! Compra en SuperMass, guarda tu ticket y regístralo aquí para participar. Sorteo: {{RIFA_FECHA}}.">
+  <meta name="theme-color" content="#C00812">
+
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="{{PAGE_URL}}">
+  <meta property="og:site_name" content="SuperMass Abarrotes">
+  <meta property="og:locale" content="es_MX">
+  <meta property="og:title" content="{{RIFA_NOMBRE}} · SuperMass Abarrotes">
+  <meta property="og:description" content="¡Gánate {{RIFA_PREMIO}}! Compra en SuperMass, registra tu ticket y participa. Sorteo: {{RIFA_FECHA}}.">
+  <meta property="og:image" content="{{OG_IMAGE}}">
+  <meta property="og:image:type" content="image/png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="Logo de SuperMass con el premio de la rifa: {{RIFA_PREMIO}}">
+  <meta name="twitter:card" content="summary_large_image">
+
+  <link rel="icon" href="/img/favicon-48.png" type="image/png">
+  <link rel="apple-touch-icon" href="/img/apple-touch-icon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@700;800&family=Nunito:wght@500;600;700;800&display=swap">
+  <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+  <div class="fondo" aria-hidden="true">
+    <span class="mancha m1"></span><span class="mancha m2"></span><span class="mancha m3"></span><span class="mancha m4"></span>
+  </div>
+
+  <a class="saltar" href="#registro">Ir directo al registro</a>
+
+  <header class="contenedor hero">
+    <div class="vidrio logo-panel">
+      <img src="/logo" alt="SuperMass Abarrotes – Cerca de ti" width="589" height="426">
+    </div>
+    <p class="etiqueta">🎉 Rifa para nuestros clientes</p>
+    <h1 class="titulo">{{RIFA_NOMBRE}}</h1>
+
+    <div class="vidrio premio">
+      <span class="premio-label">Premio principal</span>
+      <strong class="premio-nombre">{{RIFA_PREMIO}}</strong>
+      <span class="premio-fecha">
+        <svg aria-hidden="true" viewBox="0 0 24 24" width="20" height="20"><path fill="currentColor" d="M7 2h2v2h6V2h2v2h3a1 1 0 0 1 1 1v15a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a1 1 0 0 1 1-1h3zm12 8H5v10h14z"/></svg>
+        Sorteo: {{RIFA_FECHA}}
+      </span>
+    </div>
+
+    <p class="intro">Compra en SuperMass, guarda tu ticket y regístralo aquí para participar.</p>
+  </header>
+
+  <main class="contenedor">
+    <section id="registro" class="vidrio tarjeta registro" aria-labelledby="t-registro">
+      <div id="bloque-form">
+        <h2 id="t-registro" class="subtitulo">Registra tu ticket</h2>
+        <p class="ayuda-general">Te toma un minuto. Ten a la mano tu ticket de compra.</p>
+
+        <div id="cerrado" class="aviso" hidden>El registro para esta rifa ya cerró. ¡Gracias por participar!</div>
+
+        <form id="form" novalidate>
+          <div class="trampa" aria-hidden="true">
+            <label>No llenes este campo <input type="text" name="sitio" tabindex="-1" autocomplete="off"></label>
+          </div>
+
+          <div class="campo">
+            <label for="ticket">Número de ticket (folio)</label>
+            <input id="ticket" name="ticket" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="12"
+                   autocomplete="off" required aria-describedby="ticket-ayuda ticket-error" placeholder="Ej. 004512">
+            <p id="ticket-ayuda" class="ayuda">Viene impreso en tu ticket. Solo números, hasta 12.</p>
+            <p id="ticket-error" class="error" aria-live="polite"></p>
+          </div>
+
+          <div class="campo">
+            <label for="nombre">Nombre completo</label>
+            <input id="nombre" name="nombre" type="text" maxlength="120" autocomplete="name" autocapitalize="words"
+                   required aria-describedby="nombre-error" placeholder="Como aparece en tu INE">
+            <p id="nombre-error" class="error" aria-live="polite"></p>
+          </div>
+
+          <div class="campo">
+            <label for="telefono">Teléfono a 10 dígitos</label>
+            <input id="telefono" name="telefono" type="tel" inputmode="numeric" maxlength="10" autocomplete="tel-national"
+                   required aria-describedby="telefono-ayuda telefono-error" placeholder="Ej. 5512345678">
+            <p id="telefono-ayuda" class="ayuda">Te llamamos aquí si sales ganador.</p>
+            <p id="telefono-error" class="error" aria-live="polite"></p>
+          </div>
+
+          <fieldset class="campo foto" aria-describedby="foto-ayuda foto-error">
+            <legend>Foto del ticket</legend>
+            <p id="foto-ayuda" class="ayuda">Que se vean bien el folio y el total.</p>
+            <div class="foto-botones" id="foto-botones">
+              <label class="btn btn-vidrio" for="foto-camara">
+                <svg aria-hidden="true" viewBox="0 0 24 24" width="22" height="22"><path fill="currentColor" d="M9 3h6l2 3h3a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h3zm3 5a5 5 0 1 0 0 10 5 5 0 0 0 0-10zm0 2a3 3 0 1 1 0 6 3 3 0 0 1 0-6z"/></svg>
+                Tomar foto
+              </label>
+              <input class="sr-input" id="foto-camara" type="file" accept="image/*" capture="environment">
+              <label class="btn btn-vidrio" for="foto-galeria">
+                <svg aria-hidden="true" viewBox="0 0 24 24" width="22" height="22"><path fill="currentColor" d="M4 4h16a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2zm0 14h16l-5-7-4 5-3-3zM8 7a2 2 0 1 0 0 4 2 2 0 0 0 0-4z"/></svg>
+                Subir de galería
+              </label>
+              <input class="sr-input" id="foto-galeria" type="file" accept="image/*">
+            </div>
+            <div class="foto-preview" id="foto-preview" hidden>
+              <img id="foto-img" alt="Vista previa de la foto de tu ticket">
+              <button type="button" class="btn btn-chico" id="foto-quitar">Cambiar foto</button>
+            </div>
+            <p id="foto-error" class="error" aria-live="polite"></p>
+          </fieldset>
+
+          <div class="campo check">
+            <input id="privacidad" name="privacidad" type="checkbox" value="si" required aria-describedby="privacidad-error">
+            <label for="privacidad">Leí y acepto el <a href="/aviso-privacidad" target="_blank" rel="noopener">aviso de privacidad</a>.</label>
+            <p id="privacidad-error" class="error" aria-live="polite"></p>
+          </div>
+
+          <p id="error-general" class="error error-general" role="alert"></p>
+
+          <button type="submit" class="btn btn-amarillo" id="enviar">
+            <span class="btn-texto">Registrar mi ticket</span>
+            <span class="girador" aria-hidden="true"></span>
+          </button>
+        </form>
+      </div>
+
+      <div id="exito" class="exito" hidden tabindex="-1" aria-labelledby="t-exito">
+        <div class="exito-icono" aria-hidden="true">
+          <svg viewBox="0 0 24 24" width="44" height="44"><path fill="currentColor" d="M9.5 16.2 5.3 12l-1.4 1.4 5.6 5.6 11-11-1.4-1.4z"/></svg>
+        </div>
+        <h2 id="t-exito" class="subtitulo">¡Listo, ya estás participando!</h2>
+        <p>Registramos tu ticket:</p>
+        <p class="exito-ticket" id="exito-ticket">—</p>
+        <p class="exito-nota">Tu registro queda <strong>pendiente</strong> mientras revisamos la foto. Guarda tu ticket físico: lo vas a necesitar para reclamar el premio.</p>
+        <p class="exito-compartir">¡Pásale la voz a tu familia y vecinos!</p>
+        <div class="compartir">
+          <a class="btn btn-facebook" id="compartir-fb" href="#" target="_blank" rel="noopener">
+            <svg aria-hidden="true" viewBox="0 0 24 24" width="22" height="22"><path fill="currentColor" d="M13.5 22v-8h2.7l.4-3.2h-3.1V8.8c0-.9.3-1.5 1.6-1.5h1.7V4.4a23 23 0 0 0-2.5-.1c-2.5 0-4.2 1.5-4.2 4.3v2.3H7.4V14h2.7v8z"/></svg>
+            Compartir en Facebook
+          </a>
+          <a class="btn btn-whatsapp" id="compartir-wa" href="#" target="_blank" rel="noopener">
+            <svg aria-hidden="true" viewBox="0 0 24 24" width="22" height="22"><path fill="currentColor" d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm0 18.2a8.2 8.2 0 0 1-4.2-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8s-.4-.1-.6.1l-.8 1c-.1.2-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.3-.4.3-.4.7-1.3.1-.2 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 3 3 0 0 0-.9 2.2 5.1 5.1 0 0 0 1.1 2.7 11.6 11.6 0 0 0 4.5 4c1.7.7 2.3.8 3.2.6a2.7 2.7 0 0 0 1.7-1.2 2.2 2.2 0 0 0 .2-1.2c-.1-.1-.3-.2-.5-.3z"/></svg>
+            Compartir por WhatsApp
+          </a>
+        </div>
+        <button type="button" class="btn btn-vidrio" id="otro">Registrar otro ticket</button>
+      </div>
+    </section>
+
+    <section class="pasos" aria-labelledby="t-pasos">
+      <h2 id="t-pasos" class="subtitulo centrado">Cómo participar</h2>
+      <ol class="pasos-lista">
+        <li class="vidrio paso">
+          <span class="paso-num" aria-hidden="true">1</span>
+          <svg class="paso-icono" aria-hidden="true" viewBox="0 0 24 24" width="40" height="40"><path fill="currentColor" d="M7 18a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm10 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4zM5.2 4H2V2h4.5l.9 2H22l-3.6 8.5a2 2 0 0 1-1.8 1.2H8.1l-.9 1.8V16H19v2H7a2 2 0 0 1-1.8-2.9l1.4-2.6z"/></svg>
+          <h3>Compra</h3>
+          <p>Haz tus compras en SuperMass y pide tu ticket.</p>
+        </li>
+        <li class="vidrio paso">
+          <span class="paso-num" aria-hidden="true">2</span>
+          <svg class="paso-icono" aria-hidden="true" viewBox="0 0 24 24" width="40" height="40"><path fill="currentColor" d="M6 2h12a1 1 0 0 1 1 1v19l-3-2-2 2-2-2-2 2-2-2-3 2V3a1 1 0 0 1 1-1zm2 5v2h8V7zm0 4v2h8v-2zm0 4v2h5v-2z"/></svg>
+          <h3>Registra tu ticket</h3>
+          <p>Llena el formulario con tu folio y una foto del ticket.</p>
+        </li>
+        <li class="vidrio paso">
+          <span class="paso-num" aria-hidden="true">3</span>
+          <svg class="paso-icono" aria-hidden="true" viewBox="0 0 24 24" width="40" height="40"><path fill="currentColor" d="M20 7h-2.2A3 3 0 0 0 12 3.8 3 3 0 0 0 6.2 7H4a1 1 0 0 0-1 1v3a1 1 0 0 0 1 1h1v8a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-8h1a1 1 0 0 0 1-1V8a1 1 0 0 0-1-1zm-5-2a1 1 0 1 1 0 2h-2a2 2 0 0 1 2-2zM9 5a2 2 0 0 1 2 2H9a1 1 0 0 1 0-2zm2 15H7v-8h4zm6 0h-4v-8h4z"/></svg>
+          <h3>Espera el sorteo</h3>
+          <p>Sacamos al ganador en vivo por Facebook. Sorteo: {{RIFA_FECHA}}.</p>
+        </li>
+      </ol>
+    </section>
+
+    <section class="vidrio tarjeta facebook-cta" aria-labelledby="t-fb">
+      <h2 id="t-fb" class="subtitulo">Síguenos en Facebook</h2>
+      <p>Ahí transmitimos el sorteo en vivo y publicamos a los ganadores.</p>
+      <a class="btn btn-facebook" href="{{FACEBOOK_URL}}" target="_blank" rel="noopener">Ir a la página de SuperMass</a>
+    </section>
+  </main>
+
+  <footer class="contenedor">
+    <div class="vidrio pie">
+      <img src="/logo" alt="SuperMass Abarrotes" width="180" height="130" class="pie-logo">
+      <address>
+        <strong>SuperMass Abarrotes</strong><br>
+        {{TIENDA_DIRECCION}}
+      </address>
+      <nav aria-label="Enlaces" class="pie-enlaces">
+        <a href="{{FACEBOOK_URL}}" target="_blank" rel="noopener">Facebook de SuperMass</a>
+        <a href="/">Inicio</a>
+        <a href="/aviso-privacidad">Aviso de privacidad</a>
+      </nav>
+      <p><a class="btn btn-amarillo" href="/club">¿Ya tienes tu tarjeta del Club SuperMass? Créala gratis</a></p>
+      <p class="pie-legal">© {{ANIO}} SuperMass Abarrotes · Cerca de ti. Promoción válida solo con ticket original de compra.</p>
+    </div>
+  </footer>
+
+  <script type="application/json" id="config">{{CONFIG_JSON}}</script>
+  <script src="/js/app.js" defer></script>
+</body>
+</html>

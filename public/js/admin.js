@@ -49,8 +49,7 @@
     $('aviso-memoria').hidden = !me.enMemoria;
     if (!$('premio').value) $('premio').value = me.rifa.premio;
     $('tombola-premio').textContent = $('premio').value;
-    cargarStats();
-    cargarRegistros();
+    activar('caja');
   }
 
   $('form-login').addEventListener('submit', async (e) => {
@@ -77,7 +76,7 @@
   });
 
   // ---------- Pestañas ----------
-  const pestanas = ['registros', 'tombola', 'ganadores'];
+  const pestanas = [...window.SMClub.pestanas, 'registros', 'tombola', 'ganadores'];
   function activar(nombre, enfocar) {
     pestanas.forEach((p) => {
       const tab = $('tab-' + p);
@@ -90,6 +89,7 @@
     if (nombre === 'registros') { cargarStats(); cargarRegistros(); }
     if (nombre === 'tombola') { cargarStats(); prepararCarretes(); }
     if (nombre === 'ganadores') cargarGanadores();
+    if (window.SMClub.pestanas.includes(nombre)) window.SMClub.activar(nombre);
   }
   pestanas.forEach((p, i) => {
     const tab = $('tab-' + p);
