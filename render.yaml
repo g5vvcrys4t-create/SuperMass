@@ -1,7 +1,7 @@
 # Blueprint de Render: crea el servicio web y la base de datos PostgreSQL.
 services:
   - type: web
-    name: supermass-rifa
+    name: supermass-abarrotes
     runtime: node
     plan: free
     region: oregon
