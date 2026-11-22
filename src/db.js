@@ -65,6 +65,22 @@ const ESQUEMA = [
      creado_en TIMESTAMPTZ NOT NULL DEFAULT NOW(),
      cerrado_en TIMESTAMPTZ
    )`,
+  `CREATE TABLE IF NOT EXISTS tickets (
+     id SERIAL PRIMARY KEY,
+     socio_id INTEGER NOT NULL,
+     folio VARCHAR(30) NOT NULL UNIQUE,
+     monto INTEGER NOT NULL,
+     foto BYTEA NOT NULL,
+     foto_mime VARCHAR(40) NOT NULL DEFAULT 'image/jpeg',
+     estado VARCHAR(12) NOT NULL DEFAULT 'pendiente',
+     puntos INTEGER NOT NULL DEFAULT 0,
+     motivo VARCHAR(160),
+     ip VARCHAR(64),
+     creado_en TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+     revisado_en TIMESTAMPTZ
+   )`,
+  `CREATE INDEX IF NOT EXISTS tickets_socio_idx ON tickets (socio_id)`,
+  `CREATE INDEX IF NOT EXISTS tickets_estado_idx ON tickets (estado)`,
   `CREATE TABLE IF NOT EXISTS productos (
      id SERIAL PRIMARY KEY,
      nombre VARCHAR(120) NOT NULL,

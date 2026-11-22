@@ -2,6 +2,8 @@
 const crypto = require('crypto');
 const express = require('express');
 const rateLimit = require('express-rate-limit');
+const multer = require('multer');
+const sharp = require('sharp');
 
 const config = require('./config');
 const db = require('./db');
@@ -249,16 +251,18 @@ module.exports = function montarClub(app, admin) {
     const s = id && (await socioPorId(id));
     // Sin sesión respondemos 200 con socio null (evita errores en la consola de los visitantes)
     if (!s) return res.set('Cache-Control', 'no-store').json({ socio: null });
-    const [movs, canjes, invitados] = await Promise.all([
+    const [movs, canjes, invitados, tickets] = await Promise.all([
       db.query('SELECT tipo, puntos, monto, nota, creado_en FROM movimientos WHERE socio_id = $1 ORDER BY id DESC LIMIT 30', [s.id]),
       db.query('SELECT id, nombre, puntos, codigo, estado, creado_en, cerrado_en FROM canjes WHERE socio_id = $1 ORDER BY id DESC LIMIT 20', [s.id]),
       db.query('SELECT COUNT(*) AS n FROM socios WHERE referido_por = $1', [s.id]),
+      db.query('SELECT folio, monto, estado, puntos, motivo, creado_en FROM tickets WHERE socio_id = $1 ORDER BY id DESC LIMIT 10', [s.id]),
     ]);
     res.set('Cache-Control', 'no-store').json({
       socio: vistaSocio(s),
       movimientos: movs.rows,
       canjes: canjes.rows,
       invitados: Number(invitados.rows[0].n),
+      tickets: tickets.rows,
     });
   }));
 
@@ -278,6 +282,60 @@ module.exports = function montarClub(app, admin) {
     await db.query('INSERT INTO movimientos (socio_id, tipo, puntos, nota) VALUES ($1, $2, $3, $4)', [req.socio.id, 'canje', -rec.puntos, rec.nombre]);
     res.status(201).json({ ok: true, codigo: cod, recompensa: rec.nombre, puntos: r.rows[0].puntos });
   }));
+
+  // ---------- Tickets que sube el cliente ----------
+
+  const subidaTicket = multer({
+    storage: multer.memoryStorage(),
+    limits: { fileSize: config.limites.tamanoFotoMb * 1024 * 1024, files: 1, fields: 10 },
+    fileFilter: (req, file, cb) => cb(null, /^image\//.test(file.mimetype)),
+  });
+  const limiteTicket = limite(10, 10, 'Vas muy rápido. Espera unos minutos y vuelve a intentar.');
+
+  api.post('/club/ticket', limiteTicket, envolver(requiereSocio), (req, res, next) => {
+    subidaTicket.single('foto')(req, res, (err) => {
+      if (err && err.code === 'LIMIT_FILE_SIZE') return res.status(413).json({ error: `La foto pesa mucho. Máximo ${config.limites.tamanoFotoMb} MB.`, campo: 'foto' });
+      if (err) return next(err);
+      registrarTicket(req, res).catch(next);
+    });
+  });
+
+  async function registrarTicket(req, res) {
+    const s = req.socio;
+    const folio = String(req.body.folio || '').toUpperCase().replace(/[^A-Z0-9-]/g, '').slice(0, 30);
+    const monto = Math.round(Number(String(req.body.monto || '').replace(/[^\d.]/g, '')) * 100);
+    if (folio.length < 3) return res.status(400).json({ error: 'Escribe el folio que viene en tu ticket.', campo: 'folio' });
+    if (!Number.isFinite(monto) || monto < 100) return res.status(400).json({ error: 'Escribe el total que pagaste.', campo: 'monto' });
+    if (monto > programa.compraMaxima * 100) return res.status(400).json({ error: `El máximo por ticket es ${pesos(programa.compraMaxima * 100)}.`, campo: 'monto' });
+    if (!req.file) return res.status(400).json({ error: 'Sube la foto de tu ticket.', campo: 'foto' });
+
+    const hoy = new Date(Date.now() - 24 * 3600 * 1000);
+    const c = await db.query(
+      `SELECT SUM(CASE WHEN estado = 'pendiente' THEN 1 ELSE 0 END) AS pend,
+              SUM(CASE WHEN creado_en > $2 THEN 1 ELSE 0 END) AS dia
+         FROM tickets WHERE socio_id = $1`, [s.id, hoy]);
+    if (Number(c.rows[0].pend || 0) >= programa.ticketsPendientesMax) return res.status(429).json({ error: 'Ya tienes varios tickets en revisión. Espera a que los aprobemos.' });
+    if (Number(c.rows[0].dia || 0) >= programa.ticketsPorDia) return res.status(429).json({ error: 'Llegaste al máximo de tickets por día. Intenta mañana.' });
+    const dup = await db.query('SELECT 1 FROM tickets WHERE folio = $1', [folio]);
+    if (dup.rows.length) return res.status(409).json({ error: 'Ese ticket ya fue registrado.', campo: 'folio' });
+
+    let foto;
+    try {
+      foto = await sharp(req.file.buffer, { failOn: 'none' }).rotate()
+        .resize({ width: 1600, height: 1600, fit: 'inside', withoutEnlargement: true })
+        .jpeg({ quality: 78, mozjpeg: true }).toBuffer();
+    } catch {
+      return res.status(400).json({ error: 'No pudimos abrir la foto. Intenta con otra.', campo: 'foto' });
+    }
+    try {
+      await db.query('INSERT INTO tickets (socio_id, folio, monto, foto, ip) VALUES ($1, $2, $3, $4, $5)',
+        [s.id, folio, monto, foto, String(req.ip || '').slice(0, 64)]);
+    } catch (err) {
+      if (db.esDuplicado(err)) return res.status(409).json({ error: 'Ese ticket ya fue registrado.', campo: 'folio' });
+      throw err;
+    }
+    res.status(201).json({ ok: true, folio, puntosEstimados: puntosPorCompra(monto, s).puntos });
+  }
 
   // ---------- Catálogo y pedidos ----------
 
@@ -393,18 +451,19 @@ module.exports = function montarClub(app, admin) {
 
   admin.get('/club/resumen', envolver(async (req, res) => {
     const hace7 = new Date(Date.now() - 7 * 86400 * 1000);
-    const [s, n, c, p, o, pts] = await Promise.all([
+    const [s, n, c, p, o, pts, tk] = await Promise.all([
       db.query('SELECT COUNT(*) AS n FROM socios'),
       db.query('SELECT COUNT(*) AS n FROM socios WHERE creado_en > $1', [hace7]),
       db.query("SELECT COUNT(*) AS n FROM canjes WHERE estado = 'pendiente'"),
       db.query("SELECT COUNT(*) AS n FROM pedidos WHERE estado = 'nuevo'"),
       db.query('SELECT COUNT(*) AS n FROM opiniones WHERE atendida = FALSE'),
       db.query("SELECT COUNT(*) AS n, SUM(monto) AS ventas FROM movimientos WHERE tipo = 'compra' AND creado_en > $1", [hace7]),
+      db.query("SELECT COUNT(*) AS n FROM tickets WHERE estado = 'pendiente'"),
     ]);
     const num = (r) => Number(r.rows[0].n || 0);
     res.json({
       socios: num(s), nuevos7: num(n), canjesPendientes: num(c), pedidosNuevos: num(p), opinionesAbiertas: num(o),
-      compras7: num(pts), ventas7: Number(pts.rows[0].ventas || 0),
+      compras7: num(pts), ventas7: Number(pts.rows[0].ventas || 0), ticketsPendientes: num(tk),
     });
   }));
 
@@ -460,6 +519,50 @@ module.exports = function montarClub(app, admin) {
     const c = r.rows[0];
     await db.query('INSERT INTO movimientos (socio_id, tipo, puntos, nota) VALUES ($1, $2, $3, $4)', [c.socio_id, 'devolucion', c.puntos, `Canje cancelado: ${c.nombre}`]);
     await db.query('UPDATE socios SET puntos = puntos + $1 WHERE id = $2', [c.puntos, c.socio_id]);
+    res.json({ ok: true });
+  }));
+
+  // Tickets subidos por clientes
+  const ESTADOS_TICKET = ['pendiente', 'aprobado', 'rechazado'];
+  admin.get('/tickets', envolver(async (req, res) => {
+    const estado = ESTADOS_TICKET.includes(req.query.estado) ? req.query.estado : 'pendiente';
+    const r = await db.query(
+      `SELECT t.id, t.folio, t.monto, t.estado, t.puntos, t.motivo, t.creado_en, t.revisado_en,
+              s.id AS socio_id, s.nombre, s.telefono, s.historicos, s.cumple
+         FROM tickets t JOIN socios s ON s.id = t.socio_id
+        WHERE t.estado = $1 ORDER BY t.id ${estado === 'pendiente' ? 'ASC' : 'DESC'} LIMIT 100`, [estado]);
+    res.json({ tickets: r.rows.map(({ historicos, cumple, ...t }) => ({ ...t, estimado: puntosPorCompra(t.monto, { historicos, cumple }).puntos })) });
+  }));
+
+  admin.get('/tickets/:id/foto', envolver(async (req, res) => {
+    const r = await db.query('SELECT foto, foto_mime FROM tickets WHERE id = $1', [Number(req.params.id) || 0]);
+    if (!r.rows.length) return res.sendStatus(404);
+    res.set('Cache-Control', 'private, max-age=3600').type(r.rows[0].foto_mime).send(db.leerBinario(r.rows[0].foto));
+  }));
+
+  admin.post('/tickets/:id/aprobar', envolver(async (req, res) => {
+    const id = Number(req.params.id) || 0;
+    const actual = (await db.query('SELECT * FROM tickets WHERE id = $1', [id])).rows[0];
+    if (!actual) return res.status(404).json({ error: 'Ticket no encontrado.' });
+    // El admin puede corregir el total si el cliente se equivocó
+    let monto = actual.monto;
+    if ((req.body || {}).monto != null && String(req.body.monto).trim() !== '') {
+      monto = Math.round(Number(String(req.body.monto).replace(/[^\d.]/g, '')) * 100);
+      if (!Number.isFinite(monto) || monto < 100 || monto > programa.compraMaxima * 100) return res.status(400).json({ error: 'Revisa el total del ticket.' });
+    }
+    // Marcado atómico: evita que dos personas aprueben el mismo ticket
+    const r = await db.query("UPDATE tickets SET estado = 'aprobado', monto = $1, revisado_en = $2 WHERE id = $3 AND estado = 'pendiente' RETURNING id", [monto, new Date(), id]);
+    if (!r.rows.length) return res.status(409).json({ error: 'Ese ticket ya fue revisado.' });
+    const socio = await socioPorId(actual.socio_id);
+    const calc = await sumarCompra(socio, monto, `Ticket ${actual.folio}`);
+    await db.query('UPDATE tickets SET puntos = $1 WHERE id = $2', [calc.puntos, id]);
+    res.json({ ok: true, puntos: calc.puntos, referido: calc.referido, nombre: socio.nombre });
+  }));
+
+  admin.post('/tickets/:id/rechazar', envolver(async (req, res) => {
+    const motivo = texto((req.body || {}).motivo, 160) || 'No pudimos validar el ticket';
+    const r = await db.query("UPDATE tickets SET estado = 'rechazado', motivo = $1, revisado_en = $2 WHERE id = $3 AND estado = 'pendiente' RETURNING id", [motivo, new Date(), Number(req.params.id) || 0]);
+    if (!r.rows.length) return res.status(409).json({ error: 'Ese ticket ya fue revisado.' });
     res.json({ ok: true });
   }));
 

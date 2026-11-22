@@ -52,6 +52,9 @@ window.SMClub = (() => {
       const bp = $('badge-pedidos');
       bp.hidden = !r.pedidosNuevos;
       bp.textContent = r.pedidosNuevos;
+      const bt = $('badge-tickets');
+      bt.hidden = !r.ticketsPendientes;
+      bt.textContent = r.ticketsPendientes;
       const bb = $('badge-buzon');
       bb.hidden = !r.opinionesAbiertas;
       bb.textContent = r.opinionesAbiertas;
@@ -453,6 +456,57 @@ window.SMClub = (() => {
     recientesFb();
   }
 
+  // ================= Tickets de clientes =================
+  async function tickets() {
+    try {
+      const estado = $('tk-filtro').value;
+      const r = await api('/tickets?estado=' + estado);
+      $('lista-tickets').replaceChildren(...(r.tickets.length ? r.tickets.map(tarjetaTicket)
+        : [el('p', { class: 'resumen' }, estado === 'pendiente' ? '¡Al día! No hay tickets por revisar.' : 'No hay tickets aquí.')]));
+    } catch (err) { $('lista-tickets').replaceChildren(el('p', { class: 'error' }, err.message)); }
+  }
+
+  function tarjetaTicket(t) {
+    const pendiente = t.estado === 'pendiente';
+    const monto = el('input', { type: 'text', inputmode: 'decimal', value: (t.monto / 100).toFixed(2), 'aria-label': 'Total del ticket' });
+    const aprobar = async (btn) => {
+      btn.disabled = true;
+      try {
+        const res = await api(`/tickets/${t.id}/aprobar`, { method: 'POST', body: { monto: monto.value } });
+        avisoTk(`✓ +${num(res.puntos)} puntos para ${res.nombre.split(' ')[0]}${res.referido ? ' (y se pagó el bono de invitación)' : ''}.`);
+        tickets(); resumen();
+      } catch (err) { alert(err.message); btn.disabled = false; }
+    };
+    const rechazar = async () => {
+      const motivo = prompt('¿Por qué se rechaza? (lo verá el cliente)', 'La foto no se ve clara');
+      if (motivo === null) return;
+      try { await api(`/tickets/${t.id}/rechazar`, { method: 'POST', body: { motivo } }); tickets(); resumen(); }
+      catch (err) { alert(err.message); }
+    };
+    return el('article', { class: 'item' + (pendiente ? ' nuevo' : '') },
+      el('div', { class: 'item-cabeza' },
+        el('strong', {}, `Ticket ${t.folio}`),
+        el('span', { class: 'etq etq-' + (t.estado === 'aprobado' ? 'entregado' : pendiente ? 'nuevo' : 'queja') }, t.estado)
+      ),
+      el('p', {}, el('strong', {}, t.nombre), ' · ', el('a', { href: wa(t.telefono), target: '_blank', rel: 'noopener' }, tel(t.telefono))),
+      el('small', {}, `Subido ${fecha(t.creado_en)}`),
+      el('a', { class: 'ticket-foto', href: `/api/admin/tickets/${t.id}/foto`, target: '_blank', rel: 'noopener' },
+        el('img', { src: `/api/admin/tickets/${t.id}/foto`, alt: `Foto del ticket ${t.folio}`, loading: 'lazy' })),
+      pendiente
+        ? el('div', { class: 'ticket-monto' },
+            el('div', { class: 'campo' }, el('label', {}, 'Total ($)'), monto),
+            el('button', { class: 'btn btn-verde', type: 'button', onclick: (e) => aprobar(e.currentTarget) }, `✓ Aprobar (~${num(t.estimado)} pts)`),
+            el('button', { class: 'btn btn-rechazar', type: 'button', onclick: rechazar }, '✕'))
+        : el('p', {}, el('strong', {}, pesos(t.monto)), t.estado === 'aprobado' ? ` · +${num(t.puntos)} pts` : ` · ${t.motivo || ''}`)
+    );
+  }
+  function avisoTk(texto) {
+    let n = $('tk-aviso');
+    if (!n) { n = el('p', { class: 'nota-ok', id: 'tk-aviso', role: 'status' }); $('lista-tickets').before(n); }
+    n.textContent = texto;
+  }
+  $('tk-filtro').addEventListener('change', tickets);
+
   // ================= Navegación =================
   let reloj;
   function activar(nombre) {
@@ -464,9 +518,10 @@ window.SMClub = (() => {
     if (nombre === 'productos') productos();
     if (nombre === 'buzon') buzon();
     if (nombre === 'facebook') facebook();
+    if (nombre === 'tickets') { tickets(); reloj = setInterval(tickets, 30000); }
   }
   // Revisa pedidos nuevos aunque estés en otra pestaña del panel
   setInterval(resumen, 30000);
 
-  return { activar, pestanas: ['caja', 'pedidos', 'socios', 'productos', 'buzon', 'facebook'] };
+  return { activar, pestanas: ['caja', 'tickets', 'pedidos', 'socios', 'productos', 'buzon', 'facebook'] };
 })();

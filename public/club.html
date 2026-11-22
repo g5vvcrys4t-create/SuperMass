@@ -143,6 +143,48 @@
         </div>
       </section>
 
+      <section class="vidrio bloque" id="registrar-ticket" aria-labelledby="t-ticket">
+        <h2 id="t-ticket">🧾 Sube tu ticket y suma puntos</h2>
+        <p class="ayuda-general">¿No diste tu celular en caja? Sube la foto de tu ticket de SuperMass. Lo revisamos y te sumamos tus puntos.</p>
+        <form id="form-ticket" novalidate>
+          <div class="fila2">
+            <div class="campo">
+              <label for="t-folio">Folio del ticket</label>
+              <input id="t-folio" type="text" maxlength="30" autocomplete="off" autocapitalize="characters" aria-describedby="t-folio-error" placeholder="Ej. 004512">
+              <p id="t-folio-error" class="error" aria-live="polite"></p>
+            </div>
+            <div class="campo">
+              <label for="t-monto">Total pagado ($)</label>
+              <input id="t-monto" type="text" inputmode="decimal" autocomplete="off" aria-describedby="t-monto-ayuda t-monto-error" placeholder="Ej. 245.50">
+              <p id="t-monto-ayuda" class="ayuda"></p>
+              <p id="t-monto-error" class="error" aria-live="polite"></p>
+            </div>
+          </div>
+          <fieldset class="campo" aria-describedby="t-foto-error">
+            <legend>Foto del ticket</legend>
+            <p class="ayuda">Que se vean bien el folio, la fecha y el total.</p>
+            <div class="foto-botones" id="t-botones">
+              <label class="btn btn-vidrio" for="t-camara">📷 Tomar foto</label>
+              <input class="sr-input" id="t-camara" type="file" accept="image/*" capture="environment">
+              <label class="btn btn-vidrio" for="t-galeria">🖼 De galería</label>
+              <input class="sr-input" id="t-galeria" type="file" accept="image/*">
+            </div>
+            <div class="foto-preview" id="t-preview" hidden>
+              <img id="t-img" alt="Vista previa de tu ticket">
+              <button type="button" class="btn btn-chico" id="t-quitar">Cambiar foto</button>
+            </div>
+            <p id="t-foto-error" class="error" aria-live="polite"></p>
+          </fieldset>
+          <p id="t-error" class="error error-general" role="alert"></p>
+          <p class="nota-ok" id="t-ok" role="status" hidden></p>
+          <button class="btn btn-amarillo" type="submit" id="t-enviar"><span class="btn-texto">Enviar mi ticket</span><span class="girador" aria-hidden="true"></span></button>
+        </form>
+        <div id="mis-tickets" hidden>
+          <h3 class="mt">Mis tickets</h3>
+          <ul class="historial" id="lista-tickets"></ul>
+        </div>
+      </section>
+
       <section class="vidrio bloque" id="bloque-codigos" hidden aria-labelledby="t-codigos">
         <h2 id="t-codigos">Tus premios por recoger</h2>
         <p class="ayuda-general">Muestra el código en caja y te entregamos tu premio.</p>

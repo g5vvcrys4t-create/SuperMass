@@ -17,6 +17,8 @@ module.exports = {
   opinionCadaDias: 7,         // máximo una opinión premiada cada 7 días
   cumpleMultiplicador: 2,     // puntos dobles en el mes de tu cumpleaños
   compraMaxima: 10000,        // tope por ticket en caja (evita errores de dedo)
+  ticketsPorDia: 5,           // tickets que un socio puede subir por día desde la página
+  ticketsPendientesMax: 5,    // y cuántos puede tener esperando revisión a la vez
 
   niveles: [
     { id: 'vecino', nombre: 'Vecino', desde: 0, multiplicador: 1, envioGratis: false,

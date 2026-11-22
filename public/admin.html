@@ -46,6 +46,7 @@
       <img src="/logo" alt="SuperMass" width="120" height="87" class="barra-logo">
       <nav class="pestanas" role="tablist" aria-label="Secciones del panel">
         <button role="tab" id="tab-caja" aria-controls="sec-caja" aria-selected="true" class="pestana">Caja</button>
+        <button role="tab" id="tab-tickets" aria-controls="sec-tickets" aria-selected="false" class="pestana" tabindex="-1">Tickets <span class="insignia" id="badge-tickets" hidden></span></button>
         <button role="tab" id="tab-pedidos" aria-controls="sec-pedidos" aria-selected="false" class="pestana" tabindex="-1">Pedidos <span class="insignia" id="badge-pedidos" hidden></span></button>
         <button role="tab" id="tab-socios" aria-controls="sec-socios" aria-selected="false" class="pestana" tabindex="-1">Socios</button>
         <button role="tab" id="tab-productos" aria-controls="sec-productos" aria-selected="false" class="pestana" tabindex="-1">Productos</button>
@@ -127,6 +128,23 @@
           </form>
           <p id="codigo-msg" role="status"></p>
         </div>
+      </div>
+    </section>
+
+    <!-- Tickets -->
+    <section id="sec-tickets" role="tabpanel" aria-labelledby="tab-tickets" class="contenedor-ancho" hidden>
+      <div class="vidrio tarjeta">
+        <div class="cabeza-lista">
+          <h2 class="subtitulo">Tickets de clientes</h2>
+          <label class="sr" for="tk-filtro">Mostrar</label>
+          <select id="tk-filtro">
+            <option value="pendiente">Por revisar</option>
+            <option value="aprobado">Aprobados</option>
+            <option value="rechazado">Rechazados</option>
+          </select>
+        </div>
+        <p class="ayuda-general">Revisa que el folio y el total de la foto coincidan. Si el total está mal, corrígelo antes de aprobar.</p>
+        <div id="lista-tickets" class="lista-tarjetas"></div>
       </div>
     </section>
 

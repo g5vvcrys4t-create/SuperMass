@@ -167,6 +167,18 @@
       `¡Vecino! Únete gratis al Club SuperMass y te regalan ${club.bienvenida} puntos. En tu primera compra ganamos ${club.referido} puntos cada uno 🛒 ${url}`
     );
 
+    // Tickets subidos
+    const ESTADO_TK = { pendiente: '⏳ En revisión', aprobado: '✓ Aprobado', rechazado: '✕ Rechazado' };
+    $('mis-tickets').hidden = !(d.tickets && d.tickets.length);
+    $('lista-tickets').replaceChildren(...(d.tickets || []).map((t) =>
+      el('li', {},
+        el('div', {}, el('span', {}, `Ticket ${t.folio} · ${window.SM.pesos(t.monto)}`),
+          el('small', {}, `${ESTADO_TK[t.estado] || t.estado} · ${fecha(t.creado_en)}${t.estado === 'rechazado' && t.motivo ? ' · ' + t.motivo : ''}`)),
+        el('span', { class: t.estado === 'aprobado' ? 'mas' : 'menos' }, t.estado === 'aprobado' ? `+${num(t.puntos)} pts` : t.estado === 'pendiente' ? '…' : '—')
+      )
+    ));
+    socioActual = s;
+
     // Historial
     $('historial').replaceChildren(...(d.movimientos.length ? d.movimientos.map((m) =>
       el('li', {},
@@ -227,6 +239,84 @@
     if (!$('modal').open) $('modal').showModal();
   }
   function cerrarModal() { $('modal').close(); }
+
+  // ---------- Registrar ticket ----------
+  let socioActual = null;
+  let fotoTicket = null;
+  let urlFoto = null;
+
+  $('t-monto').addEventListener('input', () => {
+    const m = Number($('t-monto').value.replace(/[^\d.]/g, ''));
+    if (!m || !socioActual) { $('t-monto-ayuda').textContent = ''; return; }
+    const mult = socioActual.nivel.multiplicador * (socioActual.mesCumple ? club.cumpleMultiplicador : 1);
+    $('t-monto-ayuda').textContent = `Ganarías ${num(Math.floor(Math.floor(m / club.pesosPorPunto) * mult))} puntos.`;
+  });
+
+  // Reduce la foto en el celular antes de subirla (más rápido con datos móviles)
+  async function reducir(archivo) {
+    try {
+      const img = await createImageBitmap(archivo);
+      const escala = Math.min(1, 1600 / Math.max(img.width, img.height));
+      const c = document.createElement('canvas');
+      c.width = Math.round(img.width * escala);
+      c.height = Math.round(img.height * escala);
+      c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
+      return await new Promise((ok) => c.toBlob((b) => ok(b || archivo), 'image/jpeg', 0.82));
+    } catch { return archivo; }
+  }
+
+  ['t-camara', 't-galeria'].forEach((id) => $(id).addEventListener('change', async (e) => {
+    const f = e.target.files[0];
+    if (!f) return;
+    marcar('t-foto', '');
+    fotoTicket = await reducir(f);
+    if (urlFoto) URL.revokeObjectURL(urlFoto);
+    urlFoto = URL.createObjectURL(fotoTicket);
+    $('t-img').src = urlFoto;
+    $('t-preview').hidden = false;
+    $('t-botones').hidden = true;
+  }));
+  $('t-quitar').addEventListener('click', () => {
+    fotoTicket = null;
+    $('t-preview').hidden = true;
+    $('t-botones').hidden = false;
+    $('t-camara').value = '';
+    $('t-galeria').value = '';
+  });
+
+  $('form-ticket').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    ['t-folio', 't-monto', 't-foto'].forEach((c) => marcar(c, ''));
+    $('t-error').textContent = '';
+    $('t-ok').hidden = true;
+    const folio = $('t-folio').value.trim();
+    const monto = $('t-monto').value.trim();
+    if (folio.length < 3) return marcar('t-folio', 'Escribe el folio de tu ticket.');
+    if (!Number(monto.replace(/[^\d.]/g, ''))) return marcar('t-monto', 'Escribe el total que pagaste.');
+    if (!fotoTicket) return marcar('t-foto', 'Toma o sube la foto de tu ticket.');
+
+    const datos = new FormData();
+    datos.append('folio', folio);
+    datos.append('monto', monto);
+    datos.append('foto', fotoTicket, 'ticket.jpg');
+    cargando($('t-enviar'), true);
+    try {
+      const resp = await fetch('/api/club/ticket', { method: 'POST', body: datos, credentials: 'same-origin' });
+      const json = await resp.json().catch(() => ({}));
+      if (!resp.ok) throw Object.assign(new Error(json.error || 'No se pudo enviar.'), json);
+      $('form-ticket').reset();
+      $('t-quitar').click();
+      $('t-monto-ayuda').textContent = '';
+      $('t-ok').hidden = false;
+      $('t-ok').textContent = `✓ ¡Recibido! Revisamos tu ticket ${json.folio} y te sumamos unos ${num(json.puntosEstimados)} puntos en cuanto lo aprobemos.`;
+      await cargar();
+    } catch (err) {
+      if (err.campo) marcar('t-' + err.campo, err.message);
+      else $('t-error').textContent = err.message;
+    } finally {
+      cargando($('t-enviar'), false);
+    }
+  });
 
   // ---------- Otros ----------
   $('copiar').addEventListener('click', async () => {
