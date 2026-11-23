@@ -52,6 +52,14 @@ const enmascarar = (tel) => `•• •••• ${String(tel).slice(-4)}`;
 const plantillas = {};
 const telBonito = (t) => (t ? `${t.slice(0, 2)} ${t.slice(2, 6)} ${t.slice(6)}` : '');
 
+// Imagen que muestra Facebook al compartir cada página. El ?v= obliga a Facebook a bajar la versión nueva.
+const OG_POR_RUTA = { '/': 'inicio', '/club': 'club', '/pedido': 'pedido', '/buzon': 'buzon', '/rifa': 'rifa' };
+function imagenDePagina(base, ruta) {
+  const tipo = OG_POR_RUTA[ruta] || 'inicio';
+  if (tipo === 'rifa' && config.ogImageUrl) return config.ogImageUrl;
+  return `${base}/og/${tipo}.png?v=2`;
+}
+
 function render(archivo, req, res, ruta = '/') {
   if (!plantillas[archivo] || !config.produccion) {
     plantillas[archivo] = fs.readFileSync(path.join(PUBLIC, archivo), 'utf8');
@@ -76,7 +84,7 @@ function render(archivo, req, res, ruta = '/') {
     TIENDA_CORREO: config.tienda.correo ? `al correo ${config.tienda.correo}` : 'en el mostrador de la tienda',
     FACEBOOK_URL: config.tienda.facebook,
     PAGE_URL: base + ruta,
-    OG_IMAGE: config.ogImageUrl || `${base}/og.png`,
+    OG_IMAGE: imagenDePagina(base, ruta),
     ANIO: String(new Date().getFullYear()),
   };
   const cfg = JSON.stringify({
@@ -108,9 +116,9 @@ app.get(['/admin', '/admin/'], (req, res) => {
   res.set('Cache-Control', 'no-store').sendFile(path.join(PUBLIC, 'admin.html'));
 });
 
-app.get('/og.png', async (req, res, next) => {
+app.get(['/og.png', '/og/:tipo.png'], async (req, res, next) => {
   try {
-    res.type('png').set('Cache-Control', 'public, max-age=3600').send(await imagenOg());
+    res.type('png').set('Cache-Control', 'public, max-age=3600').send(await imagenOg(req.params.tipo || 'rifa'));
   } catch (err) {
     next(err);
   }

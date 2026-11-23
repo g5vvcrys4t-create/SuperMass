@@ -52,6 +52,19 @@
     activar('caja');
   }
 
+  // Ojito para ver la contraseña mientras se escribe.
+  function ocultarPassword(ocultar) {
+    $('password').type = ocultar ? 'password' : 'text';
+    $('ver-password').setAttribute('aria-pressed', String(!ocultar));
+    $('ver-password').setAttribute('aria-label', ocultar ? 'Mostrar contraseña' : 'Ocultar contraseña');
+    $('ver-password').querySelector('.ojo-abierto').toggleAttribute('hidden', !ocultar);
+    $('ver-password').querySelector('.ojo-cerrado').toggleAttribute('hidden', ocultar);
+  }
+  $('ver-password').addEventListener('click', () => {
+    ocultarPassword($('password').type === 'text');
+    $('password').focus();
+  });
+
   $('form-login').addEventListener('submit', async (e) => {
     e.preventDefault();
     $('login-error').textContent = '';
@@ -64,6 +77,7 @@
       const json = await resp.json().catch(() => ({}));
       if (!resp.ok) throw new Error(json.error || 'No se pudo entrar.');
       $('password').value = '';
+      ocultarPassword(true);
       await mostrarPanel();
     } catch (err) {
       $('login-error').textContent = err.message;

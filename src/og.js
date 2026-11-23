@@ -1,4 +1,4 @@
-// Genera la imagen Open Graph (1200x630) con el logo, el premio y la fecha.
+// Genera las imágenes para Facebook (1200x630): una por página (rifa, club, pedidos, buzón, inicio).
 const fs = require('fs');
 const path = require('path');
 const sharp = require('sharp');
@@ -37,17 +37,15 @@ function logoDataUri() {
   return null;
 }
 
-let cache = null;
-
-async function imagenOg() {
-  if (cache) return cache;
-  const { nombre, premio, fecha } = config.rifa;
+// Tarjeta de 1200x630 con el mismo diseño para todas las páginas.
+function tarjetaSvg({ titulo, sub, principal, pastilla, etiqueta, logo }) {
   const fuente = "'DejaVu Sans', 'Arial Rounded MT Bold', Arial, Helvetica, sans-serif";
-  const lineasPremio = renglones(premio, 22, 2);
-  const tamPremio = lineasPremio.length > 1 ? 58 : 68;
-  const logo = logoDataUri();
+  const lineas = renglones(principal, 22, 2);
+  const tam = lineas.length > 1 ? 58 : 68;
+  const textoPastilla = String(pastilla || '').slice(0, 56);
+  const yPastilla = lineas.length > 1 ? 498 : 462;
 
-  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  return `<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
   <defs>
     <linearGradient id="fondo" x1="0" y1="0" x2="1" y2="1">
       <stop offset="0" stop-color="#D11A22"/><stop offset=".55" stop-color="#C00812"/><stop offset="1" stop-color="#8A0A10"/>
@@ -65,16 +63,63 @@ async function imagenOg() {
   <rect x="62" y="62" width="1076" height="120" rx="42" fill="#fff" opacity=".07"/>
   ${logo ? `<image href="${logo}" x="100" y="96" width="380" height="140" preserveAspectRatio="xMinYMid meet"/>` :
     `<text x="100" y="190" font-family="${fuente}" font-weight="900" font-size="92" fill="#fff">SUPERMASS</text>`}
-  <text x="100" y="300" font-family="${fuente}" font-weight="800" font-size="44" fill="#EBDA52">${esc(nombre)}</text>
-  <text x="100" y="352" font-family="${fuente}" font-weight="600" font-size="28" fill="#fff" opacity=".9">PREMIO PRINCIPAL</text>
-  ${lineasPremio.map((l, i) => `<text x="100" y="${420 + i * (tamPremio + 6)}" font-family="${fuente}" font-weight="900" font-size="${tamPremio}" fill="#fff">${esc(l)}</text>`).join('\n  ')}
-  <rect x="100" y="${lineasPremio.length > 1 ? 498 : 462}" width="${Math.min(980, 64 + (`Sorteo: ${fecha}`).length * 16.5)}" height="58" rx="29" fill="#EBDA52"/>
-  <text x="130" y="${lineasPremio.length > 1 ? 537 : 501}" font-family="${fuente}" font-weight="800" font-size="28" fill="#4A060A">Sorteo: ${esc(fecha)}</text>
-  <text x="1100" y="160" text-anchor="end" font-family="${fuente}" font-weight="800" font-size="30" fill="#fff">¡Registra tu ticket!</text>
+  <text x="100" y="300" font-family="${fuente}" font-weight="800" font-size="44" fill="#EBDA52">${esc(titulo)}</text>
+  <text x="100" y="352" font-family="${fuente}" font-weight="600" font-size="28" fill="#fff" opacity=".9">${esc(sub)}</text>
+  ${lineas.map((l, i) => `<text x="100" y="${420 + i * (tam + 6)}" font-family="${fuente}" font-weight="900" font-size="${tam}" fill="#fff">${esc(l)}</text>`).join('\n  ')}
+  ${textoPastilla ? `<rect x="100" y="${yPastilla}" width="${Math.min(980, 64 + textoPastilla.length * 16.5)}" height="58" rx="29" fill="#EBDA52"/>
+  <text x="130" y="${yPastilla + 39}" font-family="${fuente}" font-weight="800" font-size="28" fill="#4A060A">${esc(textoPastilla)}</text>` : ''}
+  <text x="1100" y="160" text-anchor="end" font-family="${fuente}" font-weight="800" font-size="30" fill="#fff">${esc(etiqueta)}</text>
 </svg>`;
-
-  cache = await sharp(Buffer.from(svg)).png({ compressionLevel: 9 }).toBuffer();
-  return cache;
 }
 
-module.exports = { imagenOg };
+// Qué dice la imagen de cada página.
+function contenido(tipo) {
+  const { nombre, premio, fecha } = config.rifa;
+  const club = require('./club').publico();
+  switch (tipo) {
+    case 'club':
+      return {
+        titulo: 'Club SuperMass', sub: 'TARJETA DE PUNTOS GRATIS',
+        principal: `${club.bienvenida} puntos de regalo al unirte`,
+        pastilla: `1 punto por cada $${club.pesosPorPunto} de compra`, etiqueta: '¡Crea tu tarjeta!',
+      };
+    case 'pedido':
+      return {
+        titulo: 'SuperMass a domicilio', sub: 'PEDIDOS POR WHATSAPP',
+        principal: 'Haz tu pedido desde tu celular',
+        pastilla: config.tienda.horario, etiqueta: '¡Pide ya!',
+      };
+    case 'buzon':
+      return {
+        titulo: 'Buzón SuperMass', sub: 'QUEJAS Y SUGERENCIAS',
+        principal: 'Tu opinión cuenta',
+        pastilla: 'Dinos qué mejorar o qué producto buscas', etiqueta: '¡Escríbenos!',
+      };
+    case 'inicio':
+      return {
+        titulo: 'Club SuperMass', sub: 'ABARROTES · CERCA DE TI',
+        principal: 'Cada compra te regresa premios',
+        pastilla: `${club.bienvenida} puntos gratis al unirte`, etiqueta: 'Pedidos a domicilio',
+      };
+    default:
+      return {
+        titulo: nombre, sub: 'PREMIO PRINCIPAL',
+        principal: premio,
+        pastilla: `Sorteo: ${fecha}`, etiqueta: '¡Registra tu ticket!',
+      };
+  }
+}
+
+const TIPOS = ['rifa', 'club', 'pedido', 'buzon', 'inicio'];
+const cache = {};
+
+async function imagenOg(tipo = 'rifa') {
+  if (!TIPOS.includes(tipo)) tipo = 'rifa';
+  if (!cache[tipo]) {
+    const svg = tarjetaSvg({ ...contenido(tipo), logo: logoDataUri() });
+    cache[tipo] = await sharp(Buffer.from(svg)).png({ compressionLevel: 9 }).toBuffer();
+  }
+  return cache[tipo];
+}
+
+module.exports = { imagenOg, TIPOS };

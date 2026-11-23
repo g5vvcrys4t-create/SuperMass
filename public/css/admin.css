@@ -182,3 +182,15 @@ select { appearance: none; background-image: linear-gradient(45deg, transparent 
 .ticket-monto { display: flex; gap: 8px; align-items: end; }
 .ticket-monto .campo { margin: 0; flex: 1; }
 .ticket-monto input { min-height: 46px; padding: 8px 12px; }
+
+/* Contraseña con ojito para mostrarla */
+.con-ojo { position: relative; }
+.con-ojo input { padding-right: 60px; }
+.ojo {
+  position: absolute; top: 50%; right: 6px; transform: translateY(-50%);
+  width: 44px; height: 44px; display: grid; place-items: center;
+  border: 0; border-radius: 10px; background: transparent; color: #6B1013; cursor: pointer;
+}
+.ojo:hover { background: rgba(192, 8, 18, .08); }
+.ojo:focus-visible { outline: none; box-shadow: var(--foco); }
+.ojo svg[hidden] { display: none; }
